@@ -121,6 +121,17 @@ npm run install:all
 npm run dev
 ```
 
+## 📦 Installation Files
+
+**Note:** The installer files are **not included in the Git repository** due to their large size (885 MB and 941 MB). 
+
+To get the setup files:
+1. **Build from source** (see [INSTALLATION-FILES.md](./INSTALLATION-FILES.md))
+2. **Download from GitHub Releases** (if available)
+3. **Use portable version** (no installation needed)
+
+See [INSTALLATION-FILES.md](./INSTALLATION-FILES.md) for detailed instructions.
+
 ## 📱 Screenshots & UI
 
 ### Design System
