@@ -17,7 +17,17 @@ dist-*/
 *.tsbuildinfo
 
 # Desktop app build artifacts
+# Exclude all dist folders by default
 desktop-app/dist-*/
+
+# But include v3.5.1 installer files for distribution
+!desktop-app/dist-v3.5.1/
+desktop-app/dist-v3.5.1/**/*
+!desktop-app/dist-v3.5.1/FamBudget-3.5.1-x64.exe
+!desktop-app/dist-v3.5.1/FamBudget-3.5.1-x64.msi
+!desktop-app/dist-v3.5.1/FamBudget-3.5.1-x64.exe.blockmap
+
+# Certificate files (sensitive)
 desktop-app/*.pfx
 desktop-app/*.p12
 desktop-app/*.cer
