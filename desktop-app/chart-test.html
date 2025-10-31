@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Test - FamBudget</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+        }
+        .chart {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+        }
+        .chart canvas {
+            max-height: 100%;
+            max-width: 100%;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>FamBudget Chart Test</h1>
+    
+    <div id="status" class="status">
+        Loading Chart.js...
+    </div>
+
+    <div class="chart-container">
+        <h3>Category Chart Test</h3>
+        <div class="chart" id="categoryChart">
+            <div>Loading chart...</div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h3>Trends Chart Test</h3>
+        <div class="chart" id="trendsChart">
+            <div>Loading chart...</div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h3>Breakdown Chart Test</h3>
+        <div class="chart" id="breakdownChart">
+            <div>Loading chart...</div>
+        </div>
+    </div>
+
+    <script>
+        // Test data
+        const testData = {
+            dashboard: {
+                budgetCategories: [
+                    { name: 'Food & Dining', budget: 800, spent: 487, remaining: 313 },
+                    { name: 'Utilities', budget: 400, spent: 345, remaining: 55 },
+                    { name: 'Transportation', budget: 500, spent: 312, remaining: 188 },
+                    { name: 'Entertainment', budget: 300, spent: 189, remaining: 111 },
+                    { name: 'Shopping', budget: 250, spent: 156, remaining: 94 },
+                    { name: 'Health & Fitness', budget: 200, spent: 89, remaining: 111 }
+                ]
+            },
+            reports: {
+                trends: [
+                    { month: 'Oct 2023', income: 8200, expenses: 5800 },
+                    { month: 'Nov 2023', income: 8300, expenses: 5950 },
+                    { month: 'Dec 2023', income: 8900, expenses: 7200 },
+                    { month: 'Jan 2024', income: 8750, expenses: 6230 }
+                ],
+                categoryBreakdown: {
+                    'Food & Dining': 487,
+                    'Utilities': 345,
+                    'Transportation': 312,
+                    'Entertainment': 189,
+                    'Shopping': 156,
+                    'Health & Fitness': 89
+                }
+            }
+        };
+
+        let categoryChart = null;
+        let trendsChart = null;
+        let breakdownChart = null;
+
+        function updateStatus(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${isError ? 'error' : 'success'}`;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function renderCategoryChart() {
+            const container = document.getElementById('categoryChart');
+            
+            // Clear container
+            container.innerHTML = '';
+
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 300;
+            canvas.style.maxWidth = '100%';
+            canvas.style.height = 'auto';
+            container.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+
+            // Destroy existing chart
+            if (categoryChart) {
+                categoryChart.destroy();
+                categoryChart = null;
+            }
+
+            const categories = testData.dashboard.budgetCategories;
+            const labels = categories.map(cat => cat.name);
+            const data = categories.map(cat => cat.spent);
+            
+            const colors = [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                '#9966FF', '#FF9F40'
+            ];
+
+            try {
+                categoryChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors,
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => {
+                                        const category = categories[context.dataIndex];
+                                        const percentage = Math.round((category.spent / category.budget) * 100);
+                                        return `${category.name}: ${formatCurrency(category.spent)} (${percentage}% of budget)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                updateStatus('Category chart rendered successfully!');
+            } catch (error) {
+                console.error('Error creating category chart:', error);
+                container.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;">Chart Error: ${error.message}</div>`;
+                updateStatus('Error creating category chart: ' + error.message, true);
+            }
+        }
+
+        function renderTrendsChart() {
+            const container = document.getElementById('trendsChart');
+            
+            // Clear container
+            container.innerHTML = '';
+
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 300;
+            canvas.style.maxWidth = '100%';
+            canvas.style.height = 'auto';
+            container.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+
+            // Destroy existing chart
+            if (trendsChart) {
+                trendsChart.destroy();
+                trendsChart = null;
+            }
+
+            const trends = testData.reports.trends;
+            const labels = trends.map(trend => trend.month);
+            const incomeData = trends.map(trend => trend.income);
+            const expenseData = trends.map(trend => trend.expenses);
+
+            try {
+                trendsChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: incomeData,
+                                borderColor: '#4CAF50',
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            },
+                            {
+                                label: 'Expenses',
+                                data: expenseData,
+                                borderColor: '#F44336',
+                                backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => {
+                                        return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: (value) => formatCurrency(value)
+                                }
+                            }
+                        }
+                    }
+                });
+                updateStatus('Trends chart rendered successfully!');
+            } catch (error) {
+                console.error('Error creating trends chart:', error);
+                container.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;">Chart Error: ${error.message}</div>`;
+                updateStatus('Error creating trends chart: ' + error.message, true);
+            }
+        }
+
+        function renderBreakdownChart() {
+            const container = document.getElementById('breakdownChart');
+            
+            // Clear container
+            container.innerHTML = '';
+
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 300;
+            canvas.style.maxWidth = '100%';
+            canvas.style.height = 'auto';
+            container.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+
+            // Destroy existing chart
+            if (breakdownChart) {
+                breakdownChart.destroy();
+                breakdownChart = null;
+            }
+
+            const breakdown = testData.reports.categoryBreakdown;
+            const labels = Object.keys(breakdown);
+            const data = Object.values(breakdown);
+            
+            const colors = [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                '#9966FF', '#FF9F40'
+            ];
+
+            try {
+                breakdownChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Spending by Category',
+                            data: data,
+                            backgroundColor: colors,
+                            borderColor: colors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => {
+                                        return `${context.label}: ${formatCurrency(context.parsed.y)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: (value) => formatCurrency(value)
+                                }
+                            }
+                        }
+                    }
+                });
+                updateStatus('Breakdown chart rendered successfully!');
+            } catch (error) {
+                console.error('Error creating breakdown chart:', error);
+                container.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;">Chart Error: ${error.message}</div>`;
+                updateStatus('Error creating breakdown chart: ' + error.message, true);
+            }
+        }
+
+        // Initialize when Chart.js is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkChart = () => {
+                if (typeof Chart !== 'undefined') {
+                    updateStatus('Chart.js loaded successfully!');
+                    
+                    // Render all charts with small delays
+                    setTimeout(() => renderCategoryChart(), 100);
+                    setTimeout(() => renderTrendsChart(), 200);
+                    setTimeout(() => renderBreakdownChart(), 300);
+                } else {
+                    updateStatus('Waiting for Chart.js to load...');
+                    setTimeout(checkChart, 100);
+                }
+            };
+            checkChart();
+        });
+    </script>
+</body>
+</html>

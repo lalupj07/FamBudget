@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Chart Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .chart-container { margin: 20px 0; }
+        canvas { border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Simple Chart.js Test</h1>
+    
+    <div class="chart-container">
+        <h2>Test 1: Simple Doughnut Chart</h2>
+        <canvas id="chart1" width="400" height="300"></canvas>
+    </div>
+    
+    <div class="chart-container">
+        <h2>Test 2: Line Chart</h2>
+        <canvas id="chart2" width="400" height="300"></canvas>
+    </div>
+    
+    <div class="chart-container">
+        <h2>Test 3: Bar Chart</h2>
+        <canvas id="chart3" width="400" height="300"></canvas>
+    </div>
+    
+    <script>
+        console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+        
+        // Test 1: Simple Doughnut Chart
+        const ctx1 = document.getElementById('chart1').getContext('2d');
+        const chart1 = new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ['Food & Dining', 'Utilities', 'Transportation', 'Entertainment'],
+                datasets: [{
+                    data: [487, 345, 312, 189],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+                }]
+            },
+            options: {
+                responsive: false
+            }
+        });
+        console.log('Chart 1 created:', chart1);
+        
+        // Test 2: Line Chart
+        const ctx2 = document.getElementById('chart2').getContext('2d');
+        const chart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: ['Oct 2023', 'Nov 2023', 'Dec 2023', 'Jan 2024', 'Feb 2024', 'Mar 2024'],
+                datasets: [{
+                    label: 'Income',
+                    data: [8200, 8300, 8900, 8750, 8800, 9200],
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: 'Expenses',
+                    data: [5800, 5950, 7200, 6230, 6100, 6450],
+                    borderColor: '#F44336',
+                    backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: false
+            }
+        });
+        console.log('Chart 2 created:', chart2);
+        
+        // Test 3: Bar Chart
+        const ctx3 = document.getElementById('chart3').getContext('2d');
+        const chart3 = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: ['Food & Dining', 'Utilities', 'Transportation', 'Entertainment', 'Shopping'],
+                datasets: [{
+                    label: 'Spending',
+                    data: [487, 345, 312, 189, 156],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                }]
+            },
+            options: {
+                responsive: false
+            }
+        });
+        console.log('Chart 3 created:', chart3);
+        
+        console.log('All charts created successfully!');
+    </script>
+</body>
+</html>

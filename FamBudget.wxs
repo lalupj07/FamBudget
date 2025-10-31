@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" 
+           Name="FamBudget - Family Budgeting App" 
+           Language="1033" 
+           Version="1.0.0" 
+           Manufacturer="FamBudget" 
+           UpgradeCode="PUT-GUID-HERE">
+    
+    <Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perMachine" 
+             Description="FamBudget - Family Budgeting Made Simple"
+             Comments="Complete family budgeting system with mobile app"
+             Manufacturer="FamBudget" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Feature definitions -->
+    <Feature Id="ProductFeature" Title="FamBudget" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <!-- UI Configuration -->
+    <UIRef Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+
+    <!-- Installation directory -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="FamBudget" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuDir" Name="FamBudget" />
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <!-- Components -->
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <!-- Backend files -->
+      <Component Id="BackendFiles" Guid="*">
+        <File Id="BackendFile" Source="backend\**\*" />
+      </Component>
+      
+      <!-- Mobile files -->
+      <Component Id="MobileFiles" Guid="*">
+        <File Id="MobileFile" Source="mobile\**\*" />
+      </Component>
+      
+      <!-- Documentation files -->
+      <Component Id="ReadmeFile" Guid="*">
+        <File Id="Readme" Source="README.md" />
+      </Component>
+      
+      <Component Id="LicenseFile" Guid="*">
+        <File Id="License" Source="LICENSE" />
+      </Component>
+      
+      <Component Id="PackageFile" Guid="*">
+        <File Id="Package" Source="package.json" />
+      </Component>
+      
+      <!-- Launcher scripts -->
+      <Component Id="LauncherScript" Guid="*">
+        <File Id="Launcher" Source="FamBudget-Launcher.bat" />
+      </Component>
+      
+      <Component Id="SetupScript" Guid="*">
+        <File Id="Setup" Source="SETUP-FAMBUDGET.bat" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Desktop shortcut -->
+    <Component Id="ApplicationShortcut" Directory="DesktopFolder" Guid="*">
+      <Shortcut Id="ApplicationDesktopShortcut"
+                Name="FamBudget"
+                Description="Start FamBudget Family Budgeting App"
+                Target="[#FamBudget-Launcher.bat]"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="DesktopFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\FamBudget" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <!-- Start Menu shortcut -->
+    <Component Id="StartMenuShortcut" Directory="ProgramMenuDir" Guid="*">
+      <Shortcut Id="ApplicationStartMenuShortcut"
+                Name="FamBudget"
+                Description="Start FamBudget Family Budgeting App"
+                Target="[#FamBudget-Launcher.bat]"
+                WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="SetupStartMenuShortcut"
+                Name="FamBudget Setup"
+                Description="Setup FamBudget Database"
+                Target="[#SETUP-FAMBUDGET.bat]"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\FamBudget" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <!-- Custom actions for installation -->
+    <CustomAction Id="InstallNodeJS" 
+                  ExeCommand="powershell -Command &quot;Invoke-WebRequest -Uri 'https://nodejs.org/dist/v20.10.0/node-v20.10.0-x64.msi' -OutFile '%TEMP%\nodejs-installer.msi'; msiexec /i '%TEMP%\nodejs-installer.msi' /quiet /norestart&quot;"
+                  Directory="TARGETDIR"
+                  Execute="deferred"
+                  Impersonate="no" />
+
+    <CustomAction Id="InstallPostgreSQL" 
+                  ExeCommand="powershell -Command &quot;Invoke-WebRequest -Uri 'https://get.enterprisedb.com/postgresql/postgresql-15.5-1-windows-x64.exe' -OutFile '%TEMP%\postgresql-installer.exe'; &amp; '%TEMP%\postgresql-installer.exe' --mode unattended --superpassword fambudget123 --servicename postgresql --serviceaccount postgres --servicepassword fambudget123&quot;"
+                  Directory="TARGETDIR"
+                  Execute="deferred"
+                  Impersonate="no" />
+
+    <CustomAction Id="InstallExpoCLI" 
+                  ExeCommand="npm install -g @expo/cli"
+                  Directory="TARGETDIR"
+                  Execute="deferred"
+                  Impersonate="no" />
+
+    <CustomAction Id="InstallDependencies" 
+                  ExeCommand="cd backend && npm install && cd ..\mobile && npm install"
+                  Directory="INSTALLFOLDER"
+                  Execute="deferred"
+                  Impersonate="no" />
+
+    <CustomAction Id="SetupDatabase" 
+                  ExeCommand="cd backend && npm run seed"
+                  Directory="INSTALLFOLDER"
+                  Execute="deferred"
+                  Impersonate="no" />
+
+    <!-- Installation sequence -->
+    <InstallExecuteSequence>
+      <Custom Action="InstallNodeJS" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="InstallPostgreSQL" After="InstallNodeJS">NOT Installed</Custom>
+      <Custom Action="InstallExpoCLI" After="InstallPostgreSQL">NOT Installed</Custom>
+      <Custom Action="InstallDependencies" After="InstallExpoCLI">NOT Installed</Custom>
+      <Custom Action="SetupDatabase" After="InstallDependencies">NOT Installed</Custom>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>

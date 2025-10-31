@@ -1,0 +1,152 @@
+{
+  "name": "fambudget-desktop",
+  "version": "3.5.1",
+  "description": "FamBudget v2.0 - Advanced Family Budgeting with Income Tracking, Multi-Currency Support & Analytics",
+  "main": "main.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux",
+    "build-exe": "electron-builder --win nsis",
+    "build-msi": "electron-builder --win msi",
+    "build-msix": "electron-builder --win appx",
+    "build-portable": "electron-builder --win portable",
+    "build-all-formats": "electron-builder --win nsis --win msi --win appx --win portable",
+    "build-all": "electron-builder --win --mac --linux",
+    "dist": "npm run build",
+    "pack": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.fambudget.desktop",
+    "productName": "FamBudget",
+    "copyright": "Copyright © 2024 FamBudget Team",
+    "directories": {
+      "output": "dist-v3.5.1"
+    },
+    "files": [
+      "**/*",
+      "!dist",
+      "!dist-new",
+      "!dist-v2.0.0",
+      "!dist-v2.0.1",
+      "!build",
+      "!node_modules",
+      "!*.md",
+      "!create_simple_icon.py",
+      "!create-icon.html"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "node_modules/chart.js/dist/",
+        "to": "vendor/chart.js/",
+        "filter": [
+          "chart.umd.js"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "msi",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "appx",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "requestedExecutionLevel": "asInvoker",
+      "artifactName": "FamBudget-${version}-${arch}.${ext}",
+      "certificateFile": "./fambudget-cert.pfx",
+      "certificatePassword": "FamBudget2024!"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FamBudget v3.5.1",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "menuCategory": "Finance"
+    },
+    "msi": {
+      "oneClick": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FamBudget v3.5.1",
+      "runAfterFinish": true
+    },
+    "appx": {
+      "identityName": "FamBudget.Desktop",
+      "publisher": "CN=FamBudget Team",
+      "publisherDisplayName": "FamBudget Team",
+      "displayName": "FamBudget",
+      "backgroundColor": "#1976d2"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  },
+  "keywords": [
+    "budget",
+    "family",
+    "finance",
+    "expense",
+    "tracking",
+    "desktop",
+    "income",
+    "currency",
+    "analytics",
+    "recurring",
+    "multi-user"
+  ],
+  "author": "FamBudget Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "chart.js": "^4.5.1"
+  }
+}
