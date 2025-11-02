@@ -1697,17 +1697,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Load Chart.js first, then initialize app
-    loadChartJs()
-        .then(() => {
-            // Initialize the app after Chart.js is loaded
+    // Initialize app FIRST (sets up event listeners immediately)
             window.app = new FamBudgetApp();
+            console.log('FamBudget app initialized');
+            
+            // Load Chart.js separately (non-blocking)
+            loadChartJs()
+                .then(() => {
+                    console.log('Chart.js loaded - re-rendering charts');
+                    // Re-render charts now that Chart.js is available
+                    if (window.app && window.app.data.dashboard) {
+                        setTimeout(() => {
+                            if (window.app.renderCategoryChart) window.app.renderCategoryChart();
+                            if (window.app.renderTrendsChart) window.app.renderTrendsChart();
+                            if (window.app.renderBreakdownChart) window.app.renderBreakdownChart();
+                        }, 100);
+                    }
+                })
+                .catch(() => {
+                    console.warn('Charts will not be available');
+                });
             console.log('FamBudget app initialized with Chart.js');
         })
         .catch((error) => {
-            console.error('Failed to load Chart.js:', error);
-            // Initialize app anyway (charts will show error messages)
-            window.app = new FamBudgetApp();
+            console.warn('Failed to load Chart.js:', error);
+            // App already initialized, charts just won't work
             
             // Show user-friendly error message
             setTimeout(() => {
