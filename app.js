@@ -1,3 +1,4 @@
+console.log("FamBudget app.js loaded");
 // FamBudget Desktop App JavaScript
 class FamBudgetApp {
     constructor() {
