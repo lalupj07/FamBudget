@@ -540,6 +540,12 @@
         </div>
     </div>
 
+    <script>
+        // Configure API base URL (set this to your deployed backend URL)
+        // You can also set this in localStorage: localStorage.setItem('fambudget_api_url', 'https://your-backend-url.railway.app')
+        window.API_BASE_URL = localStorage.getItem('fambudget_api_url') || null;
+    </script>
+    <script src="api.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

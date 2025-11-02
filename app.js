@@ -15,6 +15,11 @@ class FamBudgetApp {
         this.isDarkTheme = false;
         this.selectedCurrency = 'USD';
         
+        // Initialize API service (use API_URL from environment or localStorage)
+        const apiUrl = window.API_BASE_URL || localStorage.getItem('fambudget_api_url') || null;
+        this.api = window.ApiService ? new window.ApiService(apiUrl) : null;
+        this.useAPI = !!this.api && !!apiUrl; // Use API if available, fallback to localStorage
+        
         // Chart instances
         this.categoryChart = null;
         this.trendsChart = null;
@@ -343,7 +348,22 @@ class FamBudgetApp {
     }
 
     async loadDashboardData() {
-        // Try to load from localStorage first
+        // Try to load from API first (if available)
+        if (this.useAPI && this.api) {
+            try {
+                const dashboard = await this.api.getDashboard();
+                if (dashboard) {
+                    this.data.dashboard = dashboard;
+                    this.renderDashboard();
+                    return;
+                }
+            } catch (error) {
+                console.warn('Failed to load dashboard from API, using localStorage:', error);
+                // Fall back to localStorage
+            }
+        }
+        
+        // Try to load from localStorage
         const savedDashboard = localStorage.getItem('fambudget-dashboard');
         if (savedDashboard) {
             try {
@@ -456,7 +476,23 @@ class FamBudgetApp {
     }
 
     async loadTransactions() {
-        // Try to load from localStorage first
+        // Try to load from API first (if available)
+        if (this.useAPI && this.api) {
+            try {
+                const transactions = await this.api.getTransactions();
+                if (transactions && Array.isArray(transactions)) {
+                    this.data.transactions = transactions;
+                    this.updateCategorySelect();
+                    this.renderTransactions();
+                    return;
+                }
+            } catch (error) {
+                console.warn('Failed to load transactions from API, using localStorage:', error);
+                // Fall back to localStorage
+            }
+        }
+        
+        // Try to load from localStorage
         const savedTransactions = localStorage.getItem('fambudget-transactions');
         if (savedTransactions) {
             try {
@@ -1058,21 +1094,33 @@ class FamBudgetApp {
             date: document.getElementById('transactionDate').value
         };
 
-        // Add to local data
-        const newTransaction = {
-            id: Date.now(),
-            ...formData,
-            account: this.data.accounts.find(acc => acc.id == formData.account)?.name || 'Unknown'
-        };
-
-        this.data.transactions.unshift(newTransaction);
-        this.saveTransactions();
-        this.updateCategorySelect();
-        this.renderTransactions();
-        this.hideModal();
-
-        // Show success message
-        this.showMessage('Transaction added successfully!');
+        try {
+            let newTransaction;
+            
+            // If using API, save to backend first
+            if (this.useAPI && this.api) {
+                newTransaction = await this.api.createTransaction(formData);
+                // Add to local data
+                this.data.transactions.unshift(newTransaction);
+            } else {
+                // Use localStorage (fallback)
+                newTransaction = {
+                    id: Date.now(),
+                    ...formData,
+                    account: this.data.accounts.find(acc => acc.id == formData.account)?.name || 'Unknown'
+                };
+                this.data.transactions.unshift(newTransaction);
+                await this.saveTransactions();
+            }
+            
+            this.updateCategorySelect();
+            this.renderTransactions();
+            this.hideModal();
+            this.showMessage('Transaction added successfully!');
+        } catch (error) {
+            console.error('Error adding transaction:', error);
+            this.showMessage('Error adding transaction: ' + (error.message || 'Unknown error'));
+        }
     }
 
     async addAccount() {
@@ -1186,13 +1234,24 @@ class FamBudgetApp {
         }
     }
 
-    deleteTransaction(id) {
+    async deleteTransaction(id) {
         if (confirm('Are you sure you want to delete this transaction?')) {
-            this.data.transactions = this.data.transactions.filter(t => t.id !== id);
-            this.saveTransactions();
-            this.updateCategorySelect();
-            this.renderTransactions();
-            this.showMessage('Transaction deleted successfully!');
+            try {
+                // If using API, delete from backend first
+                if (this.useAPI && this.api) {
+                    await this.api.deleteTransaction(id);
+                }
+                
+                // Remove from local data
+                this.data.transactions = this.data.transactions.filter(t => t.id !== id);
+                await this.saveTransactions();
+                this.updateCategorySelect();
+                this.renderTransactions();
+                this.showMessage('Transaction deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting transaction:', error);
+                this.showMessage('Error deleting transaction: ' + (error.message || 'Unknown error'));
+            }
         }
     }
 
