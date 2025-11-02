@@ -1296,8 +1296,10 @@ class FamBudgetApp {
     }
 
     async importData() {
-        if (window.electronAPI) {
-            const result = await null;
+        // Electron API removed for web version,
+                    { name: 'All Files', extensions: ['*'] }
+                ]
+            });
 
             if (!result.canceled) {
                 this.importDataFromFile(result.filePaths[0]);
@@ -1313,8 +1315,10 @@ class FamBudgetApp {
     }
 
     async exportData() {
-        if (window.electronAPI) {
-            const result = await null;
+        // Electron API removed for web version,
+                    { name: 'JSON Files', extensions: ['json'] }
+                ]
+            });
 
             if (!result.canceled) {
                 // Mock export functionality
