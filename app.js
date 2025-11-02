@@ -1671,13 +1671,21 @@ class FamBudgetApp {
 }
 
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize app FIRST (sets up event listeners immediately)
-    window.app = new FamBudgetApp();
-    console.log('FamBudget app initialized');
+(function() {
+    'use strict';
     
-    // Load Chart.js separately (non-blocking) for charts only
-    const loadChartJs = () => {
+    function initializeApp() {
+        try {
+            console.log('Initializing FamBudget app...');
+            window.app = new FamBudgetApp();
+            console.log('FamBudget app initialized successfully');
+        } catch (error) {
+            console.error('Error initializing app:', error);
+            alert('Error initializing app: ' + error.message);
+        }
+    }
+    
+    function loadChartJs() {
         return new Promise((resolve, reject) => {
             if (typeof Chart !== 'undefined') {
                 console.log('Chart.js already loaded');
@@ -1690,11 +1698,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (typeof Chart !== 'undefined') {
                     console.log('Chart.js loaded successfully from CDN');
                     // Re-render charts now that Chart.js is available
-                    if (window.app && window.app.data.dashboard) {
+                    if (window.app && window.app.data && window.app.data.dashboard) {
                         setTimeout(() => {
-                            if (window.app.renderCategoryChart) window.app.renderCategoryChart();
-                            if (window.app.renderTrendsChart) window.app.renderTrendsChart();
-                            if (window.app.renderBreakdownChart) window.app.renderBreakdownChart();
+                            try {
+                                if (window.app.renderCategoryChart) window.app.renderCategoryChart();
+                                if (window.app.renderTrendsChart) window.app.renderTrendsChart();
+                                if (window.app.renderBreakdownChart) window.app.renderBreakdownChart();
+                            } catch (err) {
+                                console.warn('Error rendering charts:', err);
+                            }
                         }, 100);
                     }
                     resolve();
@@ -1708,13 +1720,20 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             document.head.appendChild(script);
         });
-    };
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        // DOM already loaded
+        initializeApp();
+    }
     
     // Load Chart.js in background (non-blocking)
     loadChartJs().catch(() => {
         console.warn('Charts will not be available');
     });
-});
+})();
 
 // Add CSS for animations
 const style = document.createElement('style');
