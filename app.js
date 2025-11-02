@@ -50,8 +50,7 @@ class FamBudgetApp {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 const section = e.currentTarget.dataset.section;
-                this.navigateToSection(section);
-                    // Electron API removed for web version);
+                this.navigateToSection(section        // Electron API removed for web version for web version);
         
         const colors = [
             '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
