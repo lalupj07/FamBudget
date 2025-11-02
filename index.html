@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamBudget - Family Budgeting Made Simple</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Chart.js will be loaded dynamically by app.js to handle both dev and production paths -->
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="material-icons">account_balance_wallet</span>
+                    <h1>FamBudget</h1>
+                </div>
+                <nav class="nav-menu">
+                    <button class="nav-item active" data-section="dashboard">
+                        <span class="material-icons">dashboard</span>
+                        Dashboard
+                    </button>
+                    <button class="nav-item" data-section="transactions">
+                        <span class="material-icons">receipt_long</span>
+                        Transactions
+                    </button>
+                    <button class="nav-item" data-section="accounts">
+                        <span class="material-icons">account_balance</span>
+                        Accounts
+                    </button>
+                    <button class="nav-item" data-section="income">
+                        <span class="material-icons">attach_money</span>
+                        Income
+                    </button>
+                    <button class="nav-item" data-section="goals">
+                        <span class="material-icons">flag</span>
+                        Goals
+                    </button>
+                    <button class="nav-item" data-section="reports">
+                        <span class="material-icons">analytics</span>
+                        Reports
+                    </button>
+                </nav>
+                <div class="header-actions">
+                    <div class="currency-selector">
+                        <select id="currencySelect" class="currency-dropdown">
+                            <option value="USD">$ USD</option>
+                            <option value="EUR">€ EUR</option>
+                            <option value="GBP">£ GBP</option>
+                            <option value="JPY">¥ JPY</option>
+                            <option value="CAD">C$ CAD</option>
+                            <option value="AUD">A$ AUD</option>
+                            <option value="CHF">CHF</option>
+                            <option value="CNY">¥ CNY</option>
+                            <option value="INR">₹ INR</option>
+                            <option value="BRL">R$ BRL</option>
+                        </select>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">
+                        <span class="material-icons">dark_mode</span>
+                    </button>
+                    <button class="add-transaction-btn" id="addTransactionBtn">
+                        <span class="material-icons">add</span>
+                        Add Transaction
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <div class="date-range">
+                        <select id="dateRange">
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card income">
+                        <div class="card-icon">
+                            <span class="material-icons">trending_up</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Income</h3>
+                            <p class="amount" id="totalIncome">$0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card expense">
+                        <div class="card-icon">
+                            <span class="material-icons">trending_down</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Expenses</h3>
+                            <p class="amount" id="totalExpenses">$0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card savings">
+                        <div class="card-icon">
+                            <span class="material-icons">savings</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Net Change</h3>
+                            <p class="amount" id="netChange">$0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card rate">
+                        <div class="card-icon">
+                            <span class="material-icons">percent</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Savings Rate</h3>
+                            <p class="amount" id="savingsRate">0%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Recent Activity -->
+                <div class="dashboard-grid">
+                    <div class="chart-container">
+                        <h3>Spending by Category</h3>
+                        <div class="chart" id="categoryChart"></div>
+                    </div>
+                    <div class="recent-activity">
+                        <h3>Recent Transactions</h3>
+                        <div class="transaction-list" id="recentTransactions"></div>
+                    </div>
+                </div>
+
+                <!-- Budget Overview -->
+                <div class="budget-overview">
+                    <h3>Budget Overview</h3>
+                    <div class="budget-categories" id="budgetCategories"></div>
+                </div>
+            </section>
+
+            <!-- Transactions Section -->
+            <section id="transactions" class="content-section">
+                <div class="section-header">
+                    <h2>Transactions</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" id="addTransactionBtn2">
+                            <span class="material-icons">add</span>
+                            Add Transaction
+                        </button>
+                        <button class="btn btn-secondary" id="importBtn">
+                            <span class="material-icons">upload</span>
+                            Import
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Account:</label>
+                        <select id="accountFilter">
+                            <option value="">All Accounts</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Category:</label>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Date Range:</label>
+                        <input type="date" id="startDate">
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="transactions-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Accounts Section -->
+            <section id="accounts" class="content-section">
+                <div class="section-header">
+                    <h2>Accounts</h2>
+                    <button class="btn btn-primary" id="addAccountBtn">
+                        <span class="material-icons">add</span>
+                        Add Account
+                    </button>
+                </div>
+
+                <div class="accounts-grid" id="accountsGrid">
+                </div>
+            </section>
+
+            <!-- Income Section -->
+            <section id="income" class="content-section">
+                <div class="section-header">
+                    <h2>Income Tracker</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" id="addIncomeBtn">
+                            <span class="material-icons">add</span>
+                            Add Income
+                        </button>
+                        <button class="btn btn-secondary" id="addIncomeSourceBtn">
+                            <span class="material-icons">person_add</span>
+                            Add Source
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Income Sources -->
+                <div class="income-sources">
+                    <h3>Income Sources</h3>
+                    <div class="sources-grid" id="sourcesGrid">
+                    </div>
+                </div>
+
+                <!-- Income Table -->
+                <div class="income-table">
+                    <h3>Income History</h3>
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label>Source:</label>
+                            <select id="incomeSourceFilter">
+                                <option value="">All Sources</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Type:</label>
+                            <select id="incomeTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="recurring">Recurring</option>
+                                <option value="one-time">One-Time</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Date Range:</label>
+                            <input type="date" id="incomeStartDate">
+                            <input type="date" id="incomeEndDate">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Source</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomeTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Goals Section -->
+            <section id="goals" class="content-section">
+                <div class="section-header">
+                    <h2>Savings Goals</h2>
+                    <button class="btn btn-primary" id="addGoalBtn">
+                        <span class="material-icons">add</span>
+                        Add Goal
+                    </button>
+                </div>
+
+                <div class="goals-grid" id="goalsGrid">
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="section-header">
+                    <h2>Reports & Analytics</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" id="exportBtn">
+                            <span class="material-icons">download</span>
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-chart">
+                        <h3>Monthly Trends</h3>
+                        <div class="chart" id="trendsChart"></div>
+                    </div>
+                    <div class="report-chart">
+                        <h3>Category Breakdown</h3>
+                        <div class="chart" id="breakdownChart"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal" id="transactionModal">
+            <div class="modal-header">
+                <h3>Add Transaction</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="transactionForm">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="transactionDescription" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="transactionAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="transactionCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health & Fitness">Health & Fitness</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Education">Education</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Income">Income</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Account</label>
+                        <select id="transactionAccount" required>
+                            <option value="">Select Account</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelTransaction">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="accountModal">
+            <div class="modal-header">
+                <h3>Add Account</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm">
+                    <div class="form-group">
+                        <label>Account Name</label>
+                        <input type="text" id="accountName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Type</label>
+                        <select id="accountType" required>
+                            <option value="">Select Type</option>
+                            <option value="checking">Checking</option>
+                            <option value="savings">Savings</option>
+                            <option value="credit">Credit Card</option>
+                            <option value="investment">Investment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Initial Balance</label>
+                        <input type="number" id="accountBalance" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="color" id="accountColor" value="#1976d2">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelAccount">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="goalModal">
+            <div class="modal-header">
+                <h3>Add Savings Goal</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="goalForm">
+                    <div class="form-group">
+                        <label>Goal Name</label>
+                        <input type="text" id="goalName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Amount</label>
+                        <input type="number" id="goalTarget" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Amount</label>
+                        <input type="number" id="goalCurrent" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Target Date</label>
+                        <input type="date" id="goalDeadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="goalPriority" required>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelGoal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Goal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="incomeModal">
+            <div class="modal-header">
+                <h3>Add Income</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="incomeForm">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="incomeDescription" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="incomeAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Source</label>
+                        <select id="incomeSource" required>
+                            <option value="">Select Source</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Income Type</label>
+                        <select id="incomeType" required>
+                            <option value="recurring">Recurring</option>
+                            <option value="one-time">One-Time</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="recurringFields" style="display: none;">
+                        <label>Frequency</label>
+                        <select id="incomeFrequency">
+                            <option value="weekly">Weekly</option>
+                            <option value="bi-weekly">Bi-Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="incomeDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account</label>
+                        <select id="incomeAccount" required>
+                            <option value="">Select Account</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelIncome">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Income</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="incomeSourceModal">
+            <div class="modal-header">
+                <h3>Add Income Source</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="incomeSourceForm">
+                    <div class="form-group">
+                        <label>Source Name</label>
+                        <input type="text" id="sourceName" required placeholder="e.g., John's Salary, Freelance Work">
+                    </div>
+                    <div class="form-group">
+                        <label>Source Type</label>
+                        <select id="sourceType" required>
+                            <option value="">Select Type</option>
+                            <option value="salary">Salary</option>
+                            <option value="freelance">Freelance</option>
+                            <option value="investment">Investment</option>
+                            <option value="business">Business</option>
+                            <option value="rental">Rental Income</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Monthly Amount</label>
+                        <input type="number" id="expectedAmount" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="color" id="sourceColor" value="#4caf50">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelIncomeSource">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Source</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

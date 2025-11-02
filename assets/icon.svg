@@ -1,0 +1,58 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#0a0a0a"/>
+  
+  <!-- Circuit board pattern background -->
+  <g opacity="0.3">
+    <path d="M256 400 L256 512 M200 350 L350 350 M150 300 L400 300" stroke="#00bcd4" stroke-width="2" fill="none"/>
+    <circle cx="256" cy="400" r="3" fill="#00bcd4"/>
+    <circle cx="200" cy="350" r="2" fill="#00bcd4"/>
+    <circle cx="350" cy="350" r="2" fill="#00bcd4"/>
+    <circle cx="150" cy="300" r="2" fill="#00bcd4"/>
+    <circle cx="400" cy="300" r="2" fill="#00bcd4"/>
+  </g>
+  
+  <!-- House outline -->
+  <path d="M180 180 L256 120 L332 180 L332 320 L180 320 Z" 
+        stroke="#00e5ff" 
+        stroke-width="4" 
+        fill="none" 
+        filter="drop-shadow(0 0 10px #00e5ff)"/>
+  
+  <!-- Chimney -->
+  <rect x="300" y="140" width="20" height="40" 
+        stroke="#00e5ff" 
+        stroke-width="3" 
+        fill="none" 
+        filter="drop-shadow(0 0 8px #00e5ff)"/>
+  
+  <!-- Heart shape -->
+  <path d="M256 200 C256 200 220 180 200 200 C180 220 180 250 200 270 C220 290 256 320 256 320 C256 320 292 290 312 270 C332 250 332 220 312 200 C292 180 256 200 256 200 Z" 
+        fill="#ff6b35" 
+        filter="drop-shadow(0 0 15px #ff6b35)"/>
+  
+  <!-- Piggy bank -->
+  <ellipse cx="256" cy="240" rx="35" ry="25" fill="#81d4fa" filter="drop-shadow(0 0 8px #81d4fa)"/>
+  <ellipse cx="256" cy="235" rx="30" ry="20" fill="#b3e5fc"/>
+  
+  <!-- Piggy bank features -->
+  <circle cx="248" cy="235" r="3" fill="#1565c0"/>
+  <circle cx="264" cy="235" r="3" fill="#1565c0"/>
+  <ellipse cx="256" cy="245" rx="8" ry="4" fill="#1565c0"/>
+  
+  <!-- Coin dropping -->
+  <circle cx="256" cy="200" r="12" fill="#ffd700" filter="drop-shadow(0 0 8px #ffd700)"/>
+  <text x="256" y="205" text-anchor="middle" fill="#000" font-family="Arial" font-weight="bold" font-size="12">$</text>
+  
+  <!-- Coin trail effect -->
+  <circle cx="256" cy="210" r="8" fill="#ffd700" opacity="0.6"/>
+  <circle cx="256" cy="220" r="5" fill="#ffd700" opacity="0.3"/>
+  
+  <!-- Small star in bottom right -->
+  <g transform="translate(450, 450)">
+    <path d="M0,-8 L2.5,-2.5 L8,0 L2.5,2.5 L0,8 L-2.5,2.5 L-8,0 L-2.5,-2.5 Z" 
+          fill="#00bcd4" 
+          opacity="0.7" 
+          filter="drop-shadow(0 0 5px #00bcd4)"/>
+  </g>
+</svg>
