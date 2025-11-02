@@ -1296,82 +1296,9 @@ class FamBudgetApp {
     }
 
     async importData() {
-        // Electron API removed for web version,
-                    { name: 'All Files', extensions: ['*'] }
-                ]
-            });
-
-            if (!result.canceled) {
-                this.importDataFromFile(result.filePaths[0]);
-            }
-        } else {
-            this.showMessage('Import functionality requires the desktop app');
-        }
-    }
-
-    importDataFromFile(filePath) {
-        // Mock import functionality
-        this.showMessage(`Importing data from: ${filePath}`);
-    }
-
-    async exportData() {
-        // Electron API removed for web version,
-                    { name: 'JSON Files', extensions: ['json'] }
-                ]
-            });
-
-            if (!result.canceled) {
-                // Mock export functionality
-                this.showMessage(`Exporting data to: ${result.filePath}`);
-            }
-        } else {
-            this.showMessage('Export functionality requires the desktop app');
-        }
-    }
-
-    toggleTheme() {
-        this.isDarkTheme = !this.isDarkTheme;
-        document.body.classList.toggle('dark-theme', this.isDarkTheme);
-        localStorage.setItem('fambudget-theme', this.isDarkTheme ? 'dark' : 'light');
-        
-        // Update theme toggle icon
-        const themeIcon = document.querySelector('#themeToggle .material-icons');
-        themeIcon.textContent = this.isDarkTheme ? 'light_mode' : 'dark_mode';
-        
-        // Re-render charts with new theme
-        setTimeout(() => {
-            if (this.data.dashboard) {
-                this.renderCategoryChart();
-            }
-            if (this.data.reports) {
-                this.renderTrendsChart();
-                this.renderBreakdownChart();
-            }
-        }, 100);
-    }
-
-    loadTheme() {
-        const savedTheme = localStorage.getItem('fambudget-theme');
-        this.isDarkTheme = savedTheme === 'dark';
-        document.body.classList.toggle('dark-theme', this.isDarkTheme);
-        
-        // Update theme toggle icon
-        const themeIcon = document.querySelector('#themeToggle .material-icons');
-        themeIcon.textContent = this.isDarkTheme ? 'light_mode' : 'dark_mode';
-    }
-
-    // Currency formatting methods
-    formatCurrency(amount, currency = this.selectedCurrency) {
-        const config = this.currencyConfig[currency] || this.currencyConfig.USD;
-        const formattedAmount = Math.abs(amount).toLocaleString('en-US', {
-            minimumFractionDigits: config.decimals,
-            maximumFractionDigits: config.decimals
-        });
-        
-        if (config.position === 'before') {
-            return `${config.symbol}${formattedAmount}`;
-        } else {
-            return `${formattedAmount} ${config.symbol}`;
+        // Web version - import requires desktop app
+        this.showMessage('Import functionality requires the desktop app version');
+    } ${config.symbol}`;
         }
     }
 
