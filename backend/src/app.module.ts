@@ -13,6 +13,7 @@ import { SplitRuleModule } from './modules/split-rule/split-rule.module';
 import { ReportModule } from './modules/report/report.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { EncryptionService } from './services/encryption.service';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { EncryptionService } from './services/encryption.service';
     ReportModule,
     NotificationModule,
   ],
+  controllers: [HealthController],
   providers: [EncryptionService],
   exports: [EncryptionService],
 })
