@@ -1670,9 +1670,13 @@ class FamBudgetApp {
     }
 }
 
-// Initialize the app when DOM is loaded and load Chart.js dynamically
+// Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Load Chart.js first, then initialize the app
+    // Initialize app FIRST (sets up event listeners immediately)
+    window.app = new FamBudgetApp();
+    console.log('FamBudget app initialized');
+    
+    // Load Chart.js separately (non-blocking) for charts only
     const loadChartJs = () => {
         return new Promise((resolve, reject) => {
             if (typeof Chart !== 'undefined') {
@@ -1685,26 +1689,6 @@ document.addEventListener('DOMContentLoaded', () => {
             script.onload = () => {
                 if (typeof Chart !== 'undefined') {
                     console.log('Chart.js loaded successfully from CDN');
-                    resolve();
-                } else {
-                    reject(new Error('Chart.js not available after loading'));
-                }
-            };
-            script.onerror = () => {
-                reject(new Error('Failed to load Chart.js from CDN'));
-            };
-            document.head.appendChild(script);
-        });
-    };
-
-    // Initialize app FIRST (sets up event listeners immediately)
-            window.app = new FamBudgetApp();
-            console.log('FamBudget app initialized');
-            
-            // Load Chart.js separately (non-blocking)
-            loadChartJs()
-                .then(() => {
-                    console.log('Chart.js loaded - re-rendering charts');
                     // Re-render charts now that Chart.js is available
                     if (window.app && window.app.data.dashboard) {
                         setTimeout(() => {
@@ -1713,40 +1697,23 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (window.app.renderBreakdownChart) window.app.renderBreakdownChart();
                         }, 100);
                     }
-                })
-                .catch(() => {
-                    console.warn('Charts will not be available');
-                });
-            console.log('FamBudget app initialized with Chart.js');
-        })
-        .catch((error) => {
-            console.warn('Failed to load Chart.js:', error);
-            // App already initialized, charts just won't work
-            
-            // Show user-friendly error message
-            setTimeout(() => {
-                const errorMsg = document.createElement('div');
-                errorMsg.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: #f44336;
-                    color: white;
-                    padding: 20px 30px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                    z-index: 10000;
-                    text-align: center;
-                `;
-                errorMsg.innerHTML = `
-                    <h3 style="margin: 0 0 10px 0;">Chart.js Failed to Load</h3>
-                    <p style="margin: 0;">Please restart the application.</p>
-                `;
-                document.body.appendChild(errorMsg);
-                setTimeout(() => errorMsg.remove(), 5000);
-            }, 1000);
+                    resolve();
+                } else {
+                    reject(new Error('Chart.js not available after loading'));
+                }
+            };
+            script.onerror = () => {
+                console.warn('Failed to load Chart.js from CDN - charts will not work');
+                reject(new Error('Failed to load Chart.js from CDN'));
+            };
+            document.head.appendChild(script);
         });
+    };
+    
+    // Load Chart.js in background (non-blocking)
+    loadChartJs().catch(() => {
+        console.warn('Charts will not be available');
+    });
 });
 
 // Add CSS for animations
