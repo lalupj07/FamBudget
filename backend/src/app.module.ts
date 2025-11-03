@@ -21,29 +21,37 @@ import { HealthController } from './health.controller';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // Use lazy connection - don't connect during module initialization
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST') || 'localhost',
-        port: parseInt(configService.get('DB_PORT')) || 5432,
-        username: configService.get('DB_USERNAME') || 'postgres',
-        password: configService.get('DB_PASSWORD') || 'postgres',
-        database: configService.get('DB_DATABASE') || 'fambudget',
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') === 'development',
-        logging: configService.get('NODE_ENV') === 'development',
-        retryAttempts: 5,
-        retryDelay: 3000,
-        connectTimeoutMS: 30000,
-        // Don't fail on connection error - let app start
-        autoLoadEntities: true,
-        // Critical: Don't let connection failure block app startup
-        // Connection will be lazy - only connects when first query runs
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const config = {
+          type: 'postgres' as const,
+          host: configService.get('DB_HOST') || 'localhost',
+          port: parseInt(configService.get('DB_PORT')) || 5432,
+          username: configService.get('DB_USERNAME') || 'postgres',
+          password: configService.get('DB_PASSWORD') || 'postgres',
+          database: configService.get('DB_DATABASE') || 'fambudget',
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: configService.get('NODE_ENV') === 'development',
+          logging: configService.get('NODE_ENV') === 'development',
+          // Critical settings to prevent blocking
+          retryAttempts: 5,
+          retryDelay: 3000,
+          connectTimeoutMS: 30000,
+          autoLoadEntities: true,
+          // Don't connect immediately - lazy connection
+          // Connection will only happen when first query runs
+        };
+        
+        console.log('📊 Database configuration loaded');
+        console.log(`   Host: ${config.host}:${config.port}`);
+        console.log(`   Database: ${config.database}`);
+        console.log(`   Synchronize: ${config.synchronize}`);
+        
+        return config;
+      },
       inject: [ConfigService],
-      // Allow connection to fail without blocking app
-      // Connection will retry in background
     }),
     AuthModule,
     HouseholdModule,

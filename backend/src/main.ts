@@ -3,14 +3,33 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  const startTime = Date.now();
+  
   try {
-    console.log('🚀 Starting NestJS application...');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🚀 Starting FamBudget API...');
     console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🔌 Port: ${process.env.PORT || 3000}`);
+    console.log(`🕐 Start time: ${new Date().toISOString()}`);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    
+    // Check critical environment variables
+    const criticalVars = {
+      ENCRYPTION_KEY: process.env.ENCRYPTION_KEY ? '✅' : '❌',
+      JWT_SECRET: process.env.JWT_SECRET ? '✅' : '❌',
+      DB_HOST: process.env.DB_HOST ? '✅' : '❌',
+      NODE_ENV: process.env.NODE_ENV ? '✅' : '❌',
+      PORT: process.env.PORT ? '✅' : '⚠️',
+    };
+    
+    console.log('📋 Environment Variables Check:');
+    Object.entries(criticalVars).forEach(([key, status]) => {
+      console.log(`   ${status} ${key}`);
+    });
     
     // Create app with options to prevent startup failures
-    // Use createApplicationContext first to test if modules load
     try {
+      console.log('📦 Creating NestJS application...');
       const app = await NestFactory.create(AppModule, {
         // Don't abort on error - let app start even if DB connection fails initially
         abortOnError: false,
@@ -38,20 +57,28 @@ async function bootstrap() {
       );
       console.log('✅ Validation pipe configured');
 
-      const port = process.env.PORT || 3000;
+      const port = parseInt(process.env.PORT || '3000');
       
       // Start listening
+      console.log(`🌐 Starting HTTP server on port ${port}...`);
       await app.listen(port, '0.0.0.0');
       
-      console.log(`✅ NestJS server listening on http://0.0.0.0:${port}`);
-      console.log(`✅ Health check available at http://0.0.0.0:${port}/health`);
-      console.log(`🚀 FamBudget API is READY!`);
+      const startupTime = ((Date.now() - startTime) / 1000).toFixed(2);
       
-      // Log environment check
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log(`✅ SERVER IS LISTENING!`);
+      console.log(`   URL: http://0.0.0.0:${port}`);
+      console.log(`   Health: http://0.0.0.0:${port}/health`);
+      console.log(`   Startup time: ${startupTime}s`);
+      console.log(`🚀 FamBudget API is READY!`);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      
+      // Log environment check summary
       const requiredEnvVars = ['ENCRYPTION_KEY', 'JWT_SECRET', 'DB_HOST', 'NODE_ENV'];
       const missingVars = requiredEnvVars.filter(v => !process.env[v]);
       if (missingVars.length > 0) {
         console.warn(`⚠️  Missing environment variables: ${missingVars.join(', ')}`);
+        console.warn(`   App will start but some features may not work`);
       } else {
         console.log('✅ All required environment variables are set');
       }
