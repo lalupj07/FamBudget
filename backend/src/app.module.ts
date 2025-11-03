@@ -25,29 +25,40 @@ import { HealthController } from './health.controller';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
+        const dbHost = configService.get('DB_HOST');
+        const dbPort = parseInt(configService.get('DB_PORT')) || 5432;
+        const dbUsername = configService.get('DB_USERNAME') || 'postgres';
+        const dbPassword = configService.get('DB_PASSWORD') || 'postgres';
+        const dbDatabase = configService.get('DB_DATABASE') || 'fambudget';
+        
+        console.log('📊 Database configuration loaded');
+        console.log(`   Host: ${dbHost || '❌ NOT SET - using localhost'}:${dbPort}`);
+        console.log(`   Database: ${dbDatabase}`);
+        console.log(`   Username: ${dbUsername}`);
+        console.log(`   Synchronize: ${configService.get('NODE_ENV') === 'development'}`);
+        
+        if (!dbHost) {
+          console.error('❌ CRITICAL: DB_HOST environment variable is missing!');
+          console.error('   The app will try to connect to localhost, which will fail.');
+          console.error('   Please set DB_HOST in Railway environment variables.');
+        }
+        
         const config = {
           type: 'postgres' as const,
-          host: configService.get('DB_HOST') || 'localhost',
-          port: parseInt(configService.get('DB_PORT')) || 5432,
-          username: configService.get('DB_USERNAME') || 'postgres',
-          password: configService.get('DB_PASSWORD') || 'postgres',
-          database: configService.get('DB_DATABASE') || 'fambudget',
+          host: dbHost || 'localhost',
+          port: dbPort,
+          username: dbUsername,
+          password: dbPassword,
+          database: dbDatabase,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: configService.get('NODE_ENV') === 'development',
           logging: configService.get('NODE_ENV') === 'development',
-          // Critical settings to prevent blocking
-          retryAttempts: 5,
-          retryDelay: 3000,
-          connectTimeoutMS: 30000,
+          // Critical: Don't fail app if DB connection fails
+          // Connection will be attempted but won't crash the app
+          retryAttempts: 0, // Don't retry during module init - let it fail gracefully
+          connectTimeoutMS: 5000, // Shorter timeout
           autoLoadEntities: true,
-          // Don't connect immediately - lazy connection
-          // Connection will only happen when first query runs
         };
-        
-        console.log('📊 Database configuration loaded');
-        console.log(`   Host: ${config.host}:${config.port}`);
-        console.log(`   Database: ${config.database}`);
-        console.log(`   Synchronize: ${config.synchronize}`);
         
         return config;
       },
