@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 @Injectable()
 export class EncryptionService {
   private algorithm = 'aes-256-gcm';
-  private key: Buffer;
+  private key: Buffer | null;
 
   constructor(private configService: ConfigService) {
     // Don't throw during initialization - lazy load key

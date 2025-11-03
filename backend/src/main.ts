@@ -19,24 +19,24 @@ async function bootstrap() {
       });
       
       console.log('✅ NestJS application created');
-    
-    // Enable CORS for mobile app
-    app.enableCors({
-      origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true,
-    });
-    console.log('✅ CORS enabled');
+      
+      // Enable CORS for mobile app
+      app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+      });
+      console.log('✅ CORS enabled');
 
-    // Global validation pipe
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-      }),
-    );
-    console.log('✅ Validation pipe configured');
+      // Global validation pipe
+      app.useGlobalPipes(
+        new ValidationPipe({
+          whitelist: true,
+          transform: true,
+          forbidNonWhitelisted: true,
+        }),
+      );
+      console.log('✅ Validation pipe configured');
 
       const port = process.env.PORT || 3000;
       
@@ -46,19 +46,19 @@ async function bootstrap() {
       console.log(`✅ NestJS server listening on http://0.0.0.0:${port}`);
       console.log(`✅ Health check available at http://0.0.0.0:${port}/health`);
       console.log(`🚀 FamBudget API is READY!`);
+      
+      // Log environment check
+      const requiredEnvVars = ['ENCRYPTION_KEY', 'JWT_SECRET', 'DB_HOST', 'NODE_ENV'];
+      const missingVars = requiredEnvVars.filter(v => !process.env[v]);
+      if (missingVars.length > 0) {
+        console.warn(`⚠️  Missing environment variables: ${missingVars.join(', ')}`);
+      } else {
+        console.log('✅ All required environment variables are set');
+      }
     } catch (moduleError) {
       console.error('❌ Failed to create NestJS app:', moduleError.message);
       console.error('This might be due to missing environment variables or database connection');
       throw moduleError;
-    }
-    
-    // Log environment check
-    const requiredEnvVars = ['ENCRYPTION_KEY', 'JWT_SECRET', 'DB_HOST', 'NODE_ENV'];
-    const missingVars = requiredEnvVars.filter(v => !process.env[v]);
-    if (missingVars.length > 0) {
-      console.warn(`⚠️  Missing environment variables: ${missingVars.join(', ')}`);
-    } else {
-      console.log('✅ All required environment variables are set');
     }
   } catch (error) {
     console.error('❌ Failed to start application:');
