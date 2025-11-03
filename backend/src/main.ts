@@ -4,19 +4,21 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   try {
-    console.log('🚀 Starting FamBudget API...');
+    console.log('🚀 Starting NestJS application...');
     console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🔌 Port: ${process.env.PORT || 3000}`);
     
     // Create app with options to prevent startup failures
-    const app = await NestFactory.create(AppModule, {
-      // Don't abort on error - let app start even if DB connection fails initially
-      abortOnError: false,
-      // Don't fail if logger can't initialize
-      logger: ['error', 'warn', 'log', 'debug', 'verbose'],
-    });
-    
-    console.log('✅ NestJS application created');
+    // Use createApplicationContext first to test if modules load
+    try {
+      const app = await NestFactory.create(AppModule, {
+        // Don't abort on error - let app start even if DB connection fails initially
+        abortOnError: false,
+        // Don't fail if logger can't initialize
+        logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+      });
+      
+      console.log('✅ NestJS application created');
     
     // Enable CORS for mobile app
     app.enableCors({
@@ -36,14 +38,19 @@ async function bootstrap() {
     );
     console.log('✅ Validation pipe configured');
 
-    const port = process.env.PORT || 3000;
-    
-    // Start listening
-    await app.listen(port, '0.0.0.0');
-    
-    console.log(`✅ Server listening on http://0.0.0.0:${port}`);
-    console.log(`✅ Health check available at http://0.0.0.0:${port}/health`);
-    console.log(`🚀 FamBudget API is READY!`);
+      const port = process.env.PORT || 3000;
+      
+      // Start listening
+      await app.listen(port, '0.0.0.0');
+      
+      console.log(`✅ NestJS server listening on http://0.0.0.0:${port}`);
+      console.log(`✅ Health check available at http://0.0.0.0:${port}/health`);
+      console.log(`🚀 FamBudget API is READY!`);
+    } catch (moduleError) {
+      console.error('❌ Failed to create NestJS app:', moduleError.message);
+      console.error('This might be due to missing environment variables or database connection');
+      throw moduleError;
+    }
     
     // Log environment check
     const requiredEnvVars = ['ENCRYPTION_KEY', 'JWT_SECRET', 'DB_HOST', 'NODE_ENV'];

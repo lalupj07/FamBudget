@@ -8,18 +8,31 @@ export class EncryptionService {
   private key: Buffer;
 
   constructor(private configService: ConfigService) {
-    const encryptionKey = this.configService.get<string>('ENCRYPTION_KEY');
-    if (!encryptionKey) {
-      throw new Error('ENCRYPTION_KEY not set in environment');
+    // Don't throw during initialization - lazy load key
+    // This prevents blocking app startup
+    try {
+      const encryptionKey = this.configService.get<string>('ENCRYPTION_KEY');
+      if (!encryptionKey) {
+        console.warn('⚠️  ENCRYPTION_KEY not set - encryption features will be disabled');
+        // Don't throw - allow app to start
+        this.key = null;
+      } else {
+        // Ensure key is 32 bytes for AES-256
+        this.key = crypto.scryptSync(encryptionKey, 'salt', 32);
+      }
+    } catch (error) {
+      console.warn('⚠️  Failed to initialize encryption key:', error.message);
+      this.key = null;
     }
-    // Ensure key is 32 bytes for AES-256
-    this.key = crypto.scryptSync(encryptionKey, 'salt', 32);
   }
 
   /**
    * Encrypt sensitive data
    */
   encrypt(text: string): string {
+    if (!this.key) {
+      throw new Error('ENCRYPTION_KEY not set in environment');
+    }
     try {
       const iv = crypto.randomBytes(16);
       const cipher = crypto.createCipheriv(this.algorithm, this.key, iv) as crypto.CipherGCM;
@@ -40,6 +53,9 @@ export class EncryptionService {
    * Decrypt sensitive data
    */
   decrypt(encryptedData: string): string {
+    if (!this.key) {
+      throw new Error('ENCRYPTION_KEY not set in environment');
+    }
     try {
       const parts = encryptedData.split(':');
       if (parts.length !== 3) {

@@ -38,12 +38,8 @@ import { HealthController } from './health.controller';
         connectTimeoutMS: 30000,
         // Don't fail on connection error - let app start
         autoLoadEntities: true,
-        extra: {
-          max: 20,
-          connectionTimeoutMillis: 30000,
-          // Don't throw error if connection fails
-          statement_timeout: 30000,
-        },
+        // Critical: Don't let connection failure block app startup
+        // Connection will be lazy - only connects when first query runs
       }),
       inject: [ConfigService],
       // Allow connection to fail without blocking app
