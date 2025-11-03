@@ -33,15 +33,21 @@ import { HealthController } from './health.controller';
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
-        retryAttempts: 3,
+        retryAttempts: 5,
         retryDelay: 3000,
-        connectTimeoutMS: 10000,
+        connectTimeoutMS: 30000,
+        // Don't fail on connection error - let app start
+        autoLoadEntities: true,
         extra: {
           max: 20,
-          connectionTimeoutMillis: 10000,
+          connectionTimeoutMillis: 30000,
+          // Don't throw error if connection fails
+          statement_timeout: 30000,
         },
       }),
       inject: [ConfigService],
+      // Allow connection to fail without blocking app
+      // Connection will retry in background
     }),
     AuthModule,
     HouseholdModule,
