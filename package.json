@@ -10,10 +10,6 @@
     "email": "genxisinnovation@outlook.com",
     "url": "https://github.com/lalupj07/GenXlink"
   },
-  "workspaces": [
-    "backend",
-    "mobile"
-  ],
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:mobile\"",
     "dev:backend": "cd backend && npm run start:dev",
