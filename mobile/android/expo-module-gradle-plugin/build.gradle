@@ -1,0 +1,28 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+}
+
+group = 'expo.modules'
+version = '1.0.0'
+
+gradlePlugin {
+    plugins {
+        expoModuleGradlePlugin {
+            id = 'expo-module-gradle-plugin'
+            implementationClass = 'ExpoModuleGradlePlugin'
+            description = 'Expo Module Gradle Plugin wrapper'
+        }
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+}
+

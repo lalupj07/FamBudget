@@ -1,0 +1,69 @@
+===== COPY AND PASTE THESE INTO RAILWAY =====
+
+Add these variables one by one in Railway:
+
+1. DB_HOST=${{Postgres.PGHOST}}
+2. DB_PORT=${{Postgres.PGPORT}}
+3. DB_USERNAME=${{Postgres.PGUSER}}
+4. DB_PASSWORD=${{Postgres.PGPASSWORD}}
+5. DB_DATABASE=${{Postgres.PGDATABASE}}
+6. JWT_SECRET=GxeqiBSQjmoD6JnkKHuA347sbZrh5VylvgL1XOdP
+7. JWT_EXPIRATION=7d
+8. NODE_ENV=production
+9. PORT=3000
+10. ENCRYPTION_KEY=3Rnw0gpThAEiKZCo6dFxBkbXHlIcju8sUQV4ravYPtzMyG7eOD5LJfqW12SN9m
+
+===== IMPORTANT =====
+Replace "Postgres" with your actual PostgreSQL service name in Railway!
+
+===== HOW TO ADD =====
+1. Railway Dashboard → Backend service → Variables tab
+2. Click "+ New Variable"
+3. For each variable:
+   - Key: DB_HOST (copy from above)
+   - Value: ${{Postgres.PGHOST}} (copy from above, replace Postgres with your service name)
+   - Click "Add"
+4. Repeat for all 10 variables
+
+===== QUICK COPY FORMAT =====
+
+Variable 1:
+Key: DB_HOST
+Value: ${{Postgres.PGHOST}}
+
+Variable 2:
+Key: DB_PORT
+Value: ${{Postgres.PGPORT}}
+
+Variable 3:
+Key: DB_USERNAME
+Value: ${{Postgres.PGUSER}}
+
+Variable 4:
+Key: DB_PASSWORD
+Value: ${{Postgres.PGPASSWORD}}
+
+Variable 5:
+Key: DB_DATABASE
+Value: ${{Postgres.PGDATABASE}}
+
+Variable 6:
+Key: JWT_SECRET
+Value: GxeqiBSQjmoD6JnkKHuA347sbZrh5VylvgL1XOdP
+
+Variable 7:
+Key: JWT_EXPIRATION
+Value: 7d
+
+Variable 8:
+Key: NODE_ENV
+Value: production
+
+Variable 9:
+Key: PORT
+Value: 3000
+
+Variable 10:
+Key: ENCRYPTION_KEY
+Value: 3Rnw0gpThAEiKZCo6dFxBkbXHlIcju8sUQV4ravYPtzMyG7eOD5LJfqW12SN9m
+

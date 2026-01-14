@@ -263,7 +263,7 @@ FamBudget/
 ├── SETUP.md                  # Setup instructions
 ├── QUICKSTART.md             # Quick start guide
 ├── CONTRIBUTING.md           # Contribution guide
-└── LICENSE                   # MIT License
+└── LICENSE                   # Apache License 2.0
 ```
 
 ## 🎯 Success Criteria
@@ -312,14 +312,17 @@ FamBudget/
 
 ## 📞 Support & Contact
 
+**Company:** GenXis Innovations  
+**Email:** genxisinnovation@outlook.com  
+**Website:** https://github.com/lalupj07/GenXlink
+
 - **Documentation**: See README.md, SETUP.md
 - **Issues**: GitHub Issues
 - **Discussions**: GitHub Discussions
-- **Email**: support@fambudget.com (when available)
 
 ## 📄 License
 
-MIT License - See [LICENSE](./LICENSE) file
+Apache License 2.0 - See [LICENSE](./LICENSE) file for full license text
 
 ---
 

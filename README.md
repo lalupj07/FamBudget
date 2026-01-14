@@ -242,7 +242,16 @@ This is a personal/family project, but contributions are welcome!
 
 ## 📄 License
 
-MIT License - feel free to use this for your own family budgeting needs!
+Copyright (c) 2025 GenXis Innovations  
+All rights reserved.
+
+Licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) file for details.
+
+## 📞 Contact Information
+
+**Company:** GenXis Innovations  
+**Email:** genxisinnovation@outlook.com  
+**Website:** https://github.com/lalupj07/GenXlink
 
 ## 🙏 Acknowledgments
 

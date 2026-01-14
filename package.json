@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "description": "Automatic, collaborative family budgeting app",
   "private": true,
+  "homepage": "https://lalupj07.github.io/FamBudget",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "GenXis Innovations",
+    "email": "genxisinnovation@outlook.com",
+    "url": "https://github.com/lalupj07/GenXlink"
+  },
   "workspaces": [
     "backend",
     "mobile"
@@ -11,10 +18,11 @@
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:mobile\"",
     "dev:backend": "cd backend && npm run start:dev",
     "dev:mobile": "cd mobile && npm start",
-    "install:all": "npm install && cd backend && npm install && cd ../mobile && npm install"
+    "install:all": "npm install && cd backend && npm install && cd ../mobile && npm install",
+    "build:web": "npm run build:web --prefix desktop-app",
+    "deploy": "npm run deploy --prefix desktop-app"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
 }
-

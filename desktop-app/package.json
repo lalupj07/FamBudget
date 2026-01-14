@@ -1,7 +1,7 @@
 {
   "name": "fambudget-desktop",
   "version": "3.5.1",
-  "description": "FamBudget v2.0 - Advanced Family Budgeting with Income Tracking, Multi-Currency Support & Analytics",
+  "description": "FamBudget v2.0 - Advanced Family Budgeting with Income Tracking, Multi-Currency Support and Analytics",
   "main": "main.js",
   "homepage": "./",
   "scripts": {
@@ -19,15 +19,20 @@
     "build-all": "electron-builder --win --mac --linux",
     "dist": "npm run build",
     "pack": "electron-builder --dir",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "build:web": "node build-web.js",
+    "deploy": "npm run build:web && gh-pages -d web-build -t"
   },
   "build": {
     "appId": "com.fambudget.desktop",
     "productName": "FamBudget",
-    "copyright": "Copyright © 2024 FamBudget Team",
+    "copyright": "Copyright (c) 2025 GenXis Innovations. All rights reserved.",
     "directories": {
       "output": "dist-v3.5.1"
     },
+    "compression": "maximum",
+    "asar": true,
+    "asarUnpack": [],
     "files": [
       "**/*",
       "!dist",
@@ -38,7 +43,8 @@
       "!node_modules",
       "!*.md",
       "!create_simple_icon.py",
-      "!create-icon.html"
+      "!create-icon.html",
+      "!**/*.map"
     ],
     "extraResources": [
       {
@@ -61,26 +67,11 @@
         {
           "target": "nsis",
           "arch": [
-            "x64",
-            "ia32"
-          ]
-        },
-        {
-          "target": "msi",
-          "arch": [
-            "x64",
-            "ia32"
+            "x64"
           ]
         },
         {
           "target": "portable",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        },
-        {
-          "target": "appx",
           "arch": [
             "x64"
           ]
@@ -89,9 +80,12 @@
       "icon": "assets/icon.png",
       "requestedExecutionLevel": "asInvoker",
       "artifactName": "FamBudget-${version}-${arch}.${ext}",
-      "certificateFile": "./fambudget-cert.pfx",
-      "certificatePassword": "FamBudget2024!"
+      "sign": null,
+      "signingHashAlgorithms": null,
+      "certificateFile": null,
+      "certificatePassword": null
     },
+    "electronLanguages": ["en"],
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
@@ -101,21 +95,18 @@
       "shortcutName": "FamBudget v3.5.1",
       "deleteAppDataOnUninstall": false,
       "runAfterFinish": true,
-      "menuCategory": "Finance"
-    },
-    "msi": {
-      "oneClick": false,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "FamBudget v3.5.1",
-      "runAfterFinish": true
+      "menuCategory": "Finance",
+      "differentialPackage": false
     },
     "appx": {
       "identityName": "FamBudget.Desktop",
-      "publisher": "CN=FamBudget Team",
-      "publisherDisplayName": "FamBudget Team",
+      "publisher": "CN=GenXis Innovations",
+      "publisherDisplayName": "GenXis Innovations",
       "displayName": "FamBudget",
-      "backgroundColor": "#1976d2"
+      "backgroundColor": "#1976d2",
+      "applicationId": "FamBudget.Desktop",
+      "showNameOnTiles": true,
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "mac": {
       "target": "dmg",
@@ -139,11 +130,16 @@
     "recurring",
     "multi-user"
   ],
-  "author": "FamBudget Team",
-  "license": "MIT",
+  "author": {
+    "name": "GenXis Innovations",
+    "email": "genxisinnovation@outlook.com",
+    "url": "https://github.com/lalupj07/GenXlink"
+  },
+  "license": "Apache-2.0",
   "devDependencies": {
     "electron": "^27.0.0",
-    "electron-builder": "^24.6.4"
+    "electron-builder": "^24.6.4",
+    "gh-pages": "^6.1.0"
   },
   "dependencies": {
     "axios": "^1.5.0",

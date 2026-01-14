@@ -1,0 +1,35 @@
+// Gradle init script to disable JDK image transformation
+// This runs before any build scripts and can override AGP behavior
+
+// Set system properties before any AGP code runs
+System.setProperty('android.experimental.disableCoreJdkImageTransform', 'true')
+System.setProperty('android.disableJdkImageTransform', 'true')
+System.setProperty('android.experimental.androidTest.disableJdkImageTransform', 'true')
+
+// Note: startParameter.projectProperties is read-only, so we only use system properties
+
+// Try to disable the transform at the dependency resolution level
+gradle.beforeProject { project ->
+    project.ext.set('android.experimental.disableCoreJdkImageTransform', true)
+    project.ext.set('android.disableJdkImageTransform', true)
+}
+
+// Attempt to bypass the JDK image transform by configuring artifact transforms
+gradle.projectsEvaluated {
+    gradle.allprojects { project ->
+        if (project.hasProperty('android')) {
+            try {
+                // Try to disable transforms via AGP configuration
+                project.android {
+                    // Some AGP versions support this
+                    packagingOptions {
+                        // Disable problematic transforms
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore if not supported
+            }
+        }
+    }
+}
+

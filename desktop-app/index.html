@@ -1,8 +1,18 @@
 <!DOCTYPE html>
+<!--
+  Copyright (c) 2025 GenXis Innovations
+  All rights reserved.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="copyright" content="Copyright (c) 2025 GenXis Innovations. All rights reserved.">
+    <meta name="author" content="GenXis Innovations">
     <title>FamBudget - Family Budgeting Made Simple</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -540,6 +550,12 @@
         </div>
     </div>
 
+    <script>
+        // Configure API base URL (set this to your deployed backend URL)
+        // You can also set this in localStorage: localStorage.setItem('fambudget_api_url', 'https://your-backend-url.railway.app')
+        window.API_BASE_URL = localStorage.getItem('fambudget_api_url') || 'https://fambudget-production.up.railway.app';
+    </script>
+    <script src="api.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
