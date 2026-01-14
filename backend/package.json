@@ -2,6 +2,12 @@
   "name": "fambudget-backend",
   "version": "1.0.0",
   "description": "FamBudget Backend API",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "GenXis Innovations",
+    "email": "genxisinnovation@outlook.com",
+    "url": "https://github.com/lalupj07/GenXlink"
+  },
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main",
