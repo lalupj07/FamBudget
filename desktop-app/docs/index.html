@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamBudget - Family Budgeting Made Simple</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="material-icons">account_balance_wallet</span>
+                    <h1>FamBudget</h1>
+                </div>
+                <nav class="nav-menu">
+                    <button class="nav-item active" data-section="dashboard">
+                        <span class="material-icons">dashboard</span>
+                        Dashboard
+                    </button>
+                    <button class="nav-item" data-section="transactions">
+                        <span class="material-icons">receipt_long</span>
+                        Transactions
+                    </button>
+                    <button class="nav-item" data-section="accounts">
+                        <span class="material-icons">account_balance</span>
+                        Accounts
+                    </button>
+                    <button class="nav-item" data-section="income">
+                        <span class="material-icons">attach_money</span>
+                        Income
+                    </button>
+                    <button class="nav-item" data-section="goals">
+                        <span class="material-icons">flag</span>
+                        Goals
+                    </button>
+                    <button class="nav-item" data-section="reports">
+                        <span class="material-icons">assessment</span>
+                        Reports
+                    </button>
+                </nav>
+                <div class="header-actions">
+                    <select id="currencySelect">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="JPY">JPY</option>
+                        <option value="CAD">CAD</option>
+                        <option value="AUD">AUD</option>
+                        <option value="CHF">CHF</option>
+                        <option value="CNY">CNY</option>
+                        <option value="INR">INR</option>
+                        <option value="BRL">BRL</option>
+                    </select>
+                    <button class="btn btn-primary" id="addTransactionBtn">
+                        <span class="material-icons">add</span>
+                        Add Transaction
+                    </button>
+                    <button class="btn btn-secondary" id="themeToggle">
+                        <span class="material-icons">dark_mode</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="dashboard-section" class="section active">
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Total Income</h3>
+                            <span class="material-icons">trending_up</span>
+                        </div>
+                        <div class="card-value" id="totalIncome">$0.00</div>
+                        <div class="card-change positive">+0%</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Total Expenses</h3>
+                            <span class="material-icons">trending_down</span>
+                        </div>
+                        <div class="card-value" id="totalExpenses">$0.00</div>
+                        <div class="card-change negative">+0%</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Net Change</h3>
+                            <span class="material-icons">balance</span>
+                        </div>
+                        <div class="card-value" id="netChange">$0.00</div>
+                        <div class="card-change neutral">0%</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Savings Rate</h3>
+                            <span class="material-icons">savings</span>
+                        </div>
+                        <div class="card-value" id="savingsRate">0%</div>
+                        <div class="card-change positive">Good</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <h3>Spending by Category</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    
+                    <div class="recent-transactions">
+                        <h3>Recent Transactions</h3>
+                        <div id="recentTransactionsList">
+                            <p class="no-data">No transactions yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Configure API base URL
+        window.API_BASE_URL = localStorage.getItem('fambudget_api_url') || 'https://fambudget-backend-production.up.railway.app';
+        console.log('🔗 API URL configured:', window.API_BASE_URL);
+    </script>
+    <script src="../api.js"></script>
+    <script src="../app.js"></script>
+</body>
+</html>

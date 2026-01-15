@@ -42,17 +42,50 @@ class FamBudgetApp {
     }
 
     async init() {
-        this.setupEventListeners();
-        this.loadTheme();
-        this.loadCurrency();
-        await this.loadData();
-        this.render();
+        console.log('🚀 FamBudget App Initializing...');
+        console.log('🔗 API URL:', window.API_BASE_URL);
+        console.log('🌐 Use API:', this.useAPI);
+        
+        try {
+            this.setupEventListeners();
+            console.log('✅ Event listeners setup complete');
+            
+            this.loadTheme();
+            console.log('✅ Theme loaded');
+            
+            this.loadCurrency();
+            console.log('✅ Currency loaded');
+            
+            await this.loadData();
+            console.log('✅ Data loaded');
+            
+            this.render();
+            console.log('✅ App rendered successfully');
+            
+            // Test click handlers
+            const testBtn = document.querySelector('.nav-item');
+            if (testBtn) {
+                console.log('✅ Found navigation buttons');
+            } else {
+                console.error('❌ Navigation buttons not found');
+            }
+            
+        } catch (error) {
+            console.error('❌ App initialization failed:', error);
+        }
     }
 
     setupEventListeners() {
+        console.log('🔧 Setting up event listeners...');
+        
         // Navigation (direct bindings)
-        document.querySelectorAll('.nav-item').forEach(item => {
+        const navItems = document.querySelectorAll('.nav-item');
+        console.log(`📍 Found ${navItems.length} navigation items`);
+        
+        navItems.forEach((item, index) => {
+            console.log(`📍 Setting up nav item ${index}:`, item.dataset.section);
             item.addEventListener('click', (e) => {
+                console.log('🖱️ Navigation clicked:', e.currentTarget.dataset.section);
                 e.preventDefault();
                 const section = e.currentTarget.dataset.section;
                 this.navigateToSection(section);
@@ -62,13 +95,17 @@ class FamBudgetApp {
         // Navigation (event delegation fallback)
         const navMenu = document.querySelector('.nav-menu');
         if (navMenu) {
+            console.log('📍 Setting up nav menu delegation');
             navMenu.addEventListener('click', (e) => {
                 const btn = e.target.closest('.nav-item');
                 if (!btn) return;
+                console.log('🖱️ Nav delegation clicked:', btn.dataset.section);
                 e.preventDefault();
                 const section = btn.dataset.section;
                 this.navigateToSection(section);
             });
+        } else {
+            console.error('❌ Nav menu not found');
         }
 
         // Theme toggle

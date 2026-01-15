@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FamBudget Test</title>
+</head>
+<body>
+    <h1>FamBudget Deployment Test</h1>
+    <p>If you can see this page, the deployment is working.</p>
+    
+    <h2>Script Loading Test</h2>
+    <div id="test-results"></div>
+    
+    <script>
+        const results = document.getElementById('test-results');
+        
+        function addResult(message, success) {
+            const div = document.createElement('div');
+            div.style.color = success ? 'green' : 'red';
+            div.textContent = message;
+            results.appendChild(div);
+        }
+        
+        // Test if we can load api.js
+        const script1 = document.createElement('script');
+        script1.src = 'api.js';
+        script1.onload = () => addResult('✓ api.js loaded successfully', true);
+        script1.onerror = () => addResult('✗ api.js failed to load', false);
+        document.head.appendChild(script1);
+        
+        // Test if we can load app.js
+        const script2 = document.createElement('script');
+        script2.src = 'app.js';
+        script2.onload = () => addResult('✓ app.js loaded successfully', true);
+        script2.onerror = () => addResult('✗ app.js failed to load', false);
+        document.head.appendChild(script2);
+        
+        addResult('Test page loaded - checking scripts...', true);
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamBudget - Simple Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .nav-item { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 5px;
+        }
+        .nav-item:hover { background: #0056b3; }
+        .content { margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>FamBudget - Simple Working Version</h1>
+    
+    <nav>
+        <button class="nav-item" data-section="dashboard" onclick="showSection('dashboard')">Dashboard</button>
+        <button class="nav-item" data-section="transactions" onclick="showSection('transactions')">Transactions</button>
+        <button class="nav-item" data-section="accounts" onclick="showSection('accounts')">Accounts</button>
+        <button class="nav-item" data-section="income" onclick="showSection('income')">Income</button>
+        <button class="nav-item" data-section="goals" onclick="showSection('goals')">Goals</button>
+    </nav>
+    
+    <div id="content" class="content">
+        <h2>Dashboard</h2>
+        <p>Welcome to FamBudget! Click on the navigation buttons to test functionality.</p>
+        <p>Backend URL: <span id="backend-url">Loading...</span></p>
+        <p>Connection Status: <span id="connection-status">Testing...</span></p>
+    </div>
+    
+    <script>
+        // Configure backend URL
+        const API_URL = localStorage.getItem('fambudget_api_url') || 'https://fambudget-backend-production.up.railway.app';
+        
+        // Show backend URL
+        document.getElementById('backend-url').textContent = API_URL;
+        
+        // Test backend connection
+        async function testConnection() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                document.getElementById('connection-status').innerHTML = `✅ Connected: ${data.message}`;
+                document.getElementById('connection-status').style.color = 'green';
+            } catch (error) {
+                document.getElementById('connection-status').innerHTML = `❌ Connection failed: ${error.message}`;
+                document.getElementById('connection-status').style.color = 'red';
+            }
+        }
+        
+        // Navigation function
+        function showSection(section) {
+            console.log('Navigation clicked:', section);
+            const content = document.getElementById('content');
+            
+            const sections = {
+                dashboard: '<h2>Dashboard</h2><p>Dashboard content goes here.</p>',
+                transactions: '<h2>Transactions</h2><p>Transaction management goes here.</p>',
+                accounts: '<h2>Accounts</h2><p>Account management goes here.</p>',
+                income: '<h2>Income</h2><p>Income tracking goes here.</p>',
+                goals: '<h2>Goals</h2><p>Savings goals go here.</p>'
+            };
+            
+            content.innerHTML = sections[section] + '<p><em>Content loaded successfully! Buttons are working! 🎉</em></p>';
+        }
+        
+        // Initialize
+        testConnection();
+        console.log('FamBudget Simple Version loaded successfully!');
+    </script>
+</body>
+</html>
