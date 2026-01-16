@@ -58,56 +58,61 @@ export const lightTheme = {
   roundness: 16,
 };
 
-// Dark Theme
+// Dark Theme - Exact match to desktop app
 export const darkTheme = {
   ...MD3DarkTheme,
   fonts: configureFonts({ config: fontConfig }),
   colors: {
     ...MD3DarkTheme.colors,
-    primary: '#64B5F6',
-    primaryContainer: '#0D47A1',
-    secondary: '#81C784',
-    secondaryContainer: '#1B5E20',
-    tertiary: '#4DD0E1',
-    tertiaryContainer: '#006064',
-    error: '#EF5350',
-    errorContainer: '#B71C1C',
-    background: '#0F1419',
-    surface: '#1A1F24',
-    surfaceVariant: '#2A2F34',
-    surfaceContainer: '#242930',
-    surfaceContainerHigh: '#2E3338',
-    outline: '#6B7280',
-    outlineVariant: '#374151',
-    onPrimary: '#000000',
-    onSecondary: '#000000',
-    onTertiary: '#000000',
-    onBackground: '#F9FAFB',
-    onSurface: '#F9FAFB',
-    onSurfaceVariant: '#D1D5DB',
+    // Primary colors matching desktop
+    primary: '#1976d2',
+    primaryContainer: '#1565c0',
+    secondary: '#4caf50', // Green for income/positive
+    secondaryContainer: '#2E7D32',
+    tertiary: '#ff9800', // Orange/yellow accents
+    tertiaryContainer: '#f57c00',
+    error: '#f44336', // Red for expenses/negative
+    errorContainer: '#d32f2f',
     
-    // Custom colors for categories (adjusted for dark mode)
-    groceries: '#A5D6A7',
-    bills: '#FFB74D',
-    savings: '#4DD0E1',
-    personal: '#BA68C8',
-    travel: '#FF8A65',
-    household: '#64B5F6',
-    emergency: '#EF5350',
-    investments: '#42A5F5',
+    // Background colors - exact desktop match
+    background: '#121212', // Deep charcoal / near-black
+    surface: '#2d2d2d', // Card background (slightly lighter dark gray)
+    surfaceVariant: '#333', // Borders and dividers
+    surfaceContainer: '#1e1e1e', // Header background
+    surfaceContainerHigh: '#424242', // Secondary buttons
     
-    // Utility colors
-    warning: '#FFCA28',
-    success: '#66BB6A',
-    info: '#42A5F5',
+    // Text colors
+    outline: '#555',
+    outlineVariant: '#666',
+    onPrimary: '#FFFFFF',
+    onSecondary: '#FFFFFF',
+    onTertiary: '#FFFFFF',
+    onBackground: '#FFFFFF',
+    onSurface: '#FFFFFF',
+    onSurfaceVariant: '#ccc',
     
-    // Chart colors (adjusted for dark mode)
-    chartPrimary: '#64B5F6',
-    chartSecondary: '#81C784',
-    chartTertiary: '#FFB74D',
-    chartQuaternary: '#BA68C8',
+    // Custom colors for categories (matching desktop)
+    groceries: '#4caf50',
+    bills: '#ff9800',
+    savings: '#2196f3',
+    personal: '#9c27b0',
+    travel: '#ff7043',
+    household: '#1976d2',
+    emergency: '#f44336',
+    investments: '#0d47a1',
+    
+    // Utility colors (matching desktop)
+    warning: '#ff9800',
+    success: '#4caf50', // Green for income
+    info: '#1976d2',
+    
+    // Chart colors (matching desktop)
+    chartPrimary: '#1976d2',
+    chartSecondary: '#4caf50',
+    chartTertiary: '#ff9800',
+    chartQuaternary: '#9c27b0',
   },
-  roundness: 16,
+  roundness: 12, // Matching desktop card border radius
 };
 
 // Default export for backward compatibility

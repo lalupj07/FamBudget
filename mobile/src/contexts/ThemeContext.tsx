@@ -16,7 +16,8 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Default to dark theme (matching desktop app)
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
     loadThemePreference();
@@ -28,12 +29,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       if (savedTheme !== null) {
         setIsDarkMode(savedTheme === 'dark');
       } else {
-        // Default to system preference
-        setIsDarkMode(false);
+        // Default to dark theme (matching desktop app design)
+        setIsDarkMode(true);
       }
     } catch (error) {
       console.error('Error loading theme preference:', error);
-      setIsDarkMode(false);
+      setIsDarkMode(true); // Default to dark on error
     }
   };
 

@@ -1,7 +1,7 @@
 {
   "name": "fambudget-desktop",
-  "version": "3.5.1",
-  "description": "FamBudget v2.0 - Advanced Family Budgeting with Income Tracking, Multi-Currency Support and Analytics",
+  "version": "4.0.1",
+  "description": "FamBudget v4.0.1 - Advanced Family Budgeting with Income Tracking, Multi-Currency Support and Analytics",
   "main": "main.js",
   "homepage": "./",
   "scripts": {
@@ -28,7 +28,7 @@
     "productName": "FamBudget",
     "copyright": "Copyright (c) 2025 GenXis Innovations. All rights reserved.",
     "directories": {
-      "output": "dist-v3.5.1"
+      "output": "dist-v4.0.1"
     },
     "compression": "maximum",
     "asar": true,
@@ -39,6 +39,8 @@
       "!dist-new",
       "!dist-v2.0.0",
       "!dist-v2.0.1",
+      "!dist-v3.5.1",
+      "!dist-v4.0.1",
       "!build",
       "!node_modules",
       "!*.md",
@@ -77,7 +79,6 @@
           ]
         }
       ],
-      "icon": "assets/icon.png",
       "requestedExecutionLevel": "asInvoker",
       "artifactName": "FamBudget-${version}-${arch}.${ext}",
       "sign": null,
@@ -92,7 +93,7 @@
       "allowElevation": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "FamBudget v3.5.1",
+      "shortcutName": "FamBudget",
       "deleteAppDataOnUninstall": false,
       "runAfterFinish": true,
       "menuCategory": "Finance",

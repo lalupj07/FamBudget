@@ -47,7 +47,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (storedToken && storedUser) {
         setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (e) {
+          console.error('Error parsing stored user:', e);
+        }
         if (storedHousehold) {
           setHousehold(JSON.parse(storedHousehold));
         }

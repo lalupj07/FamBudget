@@ -4,11 +4,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from 'react-native-paper';
 
 import DashboardScreen from '../screens/main/DashboardScreen';
-import BudgetScreen from '../screens/main/BudgetScreen';
 import TransactionsScreen from '../screens/main/TransactionsScreen';
-import GoalsScreen from '../screens/main/GoalsScreen';
-import SettingsScreen from '../screens/main/SettingsScreen';
 import AccountsScreen from '../screens/main/AccountsScreen';
+import IncomeScreen from '../screens/main/IncomeScreen';
+import GoalsScreen from '../screens/main/GoalsScreen';
 import ReportsScreen from '../screens/main/ReportsScreen';
 
 const Tab = createBottomTabNavigator();
@@ -20,17 +19,28 @@ const MainNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.outline,
+        tabBarInactiveTintColor: theme.colors.outlineVariant,
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.surfaceVariant,
+          borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
         },
         headerStyle: {
-          backgroundColor: theme.colors.primary,
+          backgroundColor: theme.colors.surfaceContainer,
+          borderBottomColor: theme.colors.surfaceVariant,
+          borderBottomWidth: 1,
         },
-        headerTintColor: '#FFFFFF',
+        headerTintColor: theme.colors.onSurface,
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: '500',
+          fontSize: 20,
         },
       }}
     >
@@ -38,19 +48,9 @@ const MainNavigator = () => {
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          title: 'Home',
+          title: 'Dashboard',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="view-dashboard" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Budget"
-        component={BudgetScreen}
-        options={{
-          title: 'Budget',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="wallet" size={size} color={color} />
           ),
         }}
       />
@@ -60,7 +60,27 @@ const MainNavigator = () => {
         options={{
           title: 'Transactions',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="format-list-bulleted" size={size} color={color} />
+            <MaterialCommunityIcons name="receipt-long" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Accounts"
+        component={AccountsScreen}
+        options={{
+          title: 'Accounts',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account-balance" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Income"
+        component={IncomeScreen}
+        options={{
+          title: 'Income',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="attach-money" size={size} color={color} />
           ),
         }}
       />
@@ -70,17 +90,17 @@ const MainNavigator = () => {
         options={{
           title: 'Goals',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="flag-checkered" size={size} color={color} />
+            <MaterialCommunityIcons name="flag" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
+        name="Reports"
+        component={ReportsScreen}
         options={{
-          title: 'Settings',
+          title: 'Reports',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cog" size={size} color={color} />
+            <MaterialCommunityIcons name="analytics" size={size} color={color} />
           ),
         }}
       />
