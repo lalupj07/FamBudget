@@ -17,7 +17,10 @@ class FamBudgetApp {
         // Initialize API service (use API_URL from environment or localStorage)
         const apiUrl = window.API_BASE_URL || localStorage.getItem('fambudget_api_url') || null;
         this.api = window.ApiService ? new window.ApiService(apiUrl) : null;
-        this.useAPI = !!this.api && !!apiUrl; // Use API if available, fallback to localStorage
+        
+        // Only use API if authenticated (has token) - prevents 401 errors
+        const hasAuthToken = !!localStorage.getItem('fambudget_token');
+        this.useAPI = !!this.api && !!apiUrl && hasAuthToken;
         
         // Chart instances
         this.categoryChart = null;
@@ -43,7 +46,8 @@ class FamBudgetApp {
 
     async init() {
         console.log('🚀 FamBudget App Initializing...');
-        console.log('🔗 API URL:', window.API_BASE_URL);
+        console.log('🔗 API URL:', window.API_BASE_URL || 'None (offline mode)');
+        console.log('🔐 Authenticated:', !!localStorage.getItem('fambudget_token'));
         console.log('🌐 Use API:', this.useAPI);
         
         try {
@@ -1901,34 +1905,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             console.log(`Attempting to load Chart.js from IPC path: ${chartJsPath}`);
                             return tryLoad(chartJsPath, 'production IPC path');
                         }
+                        // null means dev mode - skip silently
+                        return Promise.reject(new Error('skip'));
                     } catch (error) {
-                        console.warn('IPC path unavailable:', error);
+                        return Promise.reject(new Error('skip'));
                     }
-                    return Promise.reject(new Error('IPC path unavailable'));
                 },
-                // Fallback: Manual construction from resources path
+                // Fallback: Manual construction from resources path (production only)
                 async () => {
-                    try {
-                        const resourcesPath = await window.electronAPI?.getResourcesPath?.();
-                        if (resourcesPath) {
-                            // Normalize Windows path for file:// protocol
-                            let normalizedPath = resourcesPath.replace(/\\/g, '/');
-                            
-                            // Handle Windows drive letters (C:, D:, etc.)
-                            if (/^[A-Za-z]:/.test(normalizedPath)) {
-                                // Windows path with drive letter: C:/path -> /C:/path for file://
-                                normalizedPath = '/' + normalizedPath;
-                            }
-                            
-                            // Construct file:// URL (always use triple slash for absolute paths)
-                            const filePath = `file://${normalizedPath}/vendor/chart.js/chart.umd.js`;
-                            console.log(`Attempting to load Chart.js from resources path: ${filePath}`);
-                            return tryLoad(filePath, 'production extraResources');
-                        }
-                    } catch (error) {
-                        console.warn('Resources path unavailable:', error);
-                    }
-                    return Promise.reject(new Error('No resources path available'));
+                    // Skip this in dev mode - go straight to node_modules
+                    return Promise.reject(new Error('skip'));
                 },
                 // Development: local node_modules
                 () => tryLoad('node_modules/chart.js/dist/chart.umd.js', 'dev node_modules'),
@@ -1947,7 +1933,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     await paths[index]();
                     resolve();
                 } catch (error) {
-                    console.warn(`Failed to load Chart.js from path ${index + 1}:`, error.message);
+                    // Only log real errors, not intentional skips
+                    if (error.message !== 'skip') {
+                        console.warn(`Chart.js path ${index + 1} unavailable, trying next...`);
+                    }
                     attemptLoad(index + 1);
                 }
             };

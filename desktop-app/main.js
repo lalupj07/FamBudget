@@ -1,230 +1,123 @@
 /**
- * Copyright (c) 2025 GenXis Innovations
- * All rights reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * FamBudget Desktop - Main Process
+ * Clean, Standard Version
  */
 
-const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
-// Keep a global reference of the window object
+// [FIX 1] Disable Hardware Acceleration - proven to help with blank screens
+app.disableHardwareAcceleration();
+app.commandLine.appendSwitch('disable-gpu');
+app.commandLine.appendSwitch('disable-gpu-compositing');
+app.commandLine.appendSwitch('disable-gpu-sandbox');
+app.commandLine.appendSwitch('disable-software-rasterizer');
+
 let mainWindow;
-let isDev = process.argv.includes('--dev');
+const isDev = process.argv.includes('--dev');
 
-// Create the main window
-const createWindow = () => {
-  
-  // Create the browser window
+function createWindow() {
+  // [FIX 2] Standard Window Configuration
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
     minWidth: 1200,
     minHeight: 800,
+    center: true,
+    show: false, // Wait for ready-to-show
+    backgroundColor: '#f5f5f5',
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      enableRemoteModule: false,
-      preload: path.join(__dirname, 'preload.js')
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: false
     },
     icon: path.join(__dirname, 'assets/icon.png'),
-    titleBarStyle: 'default',
-    show: false
+    title: 'FamBudget'
   });
 
-  // Load the app
-  mainWindow.loadFile('index.html');
+  // [FIX 3] Absolute Path Loading
+  const indexPath = path.join(__dirname, 'index.html');
+  console.log('Loading app from:', indexPath);
+  
+  mainWindow.loadFile(indexPath);
 
-  // Show window when ready
+  // [FIX 4] Reliable Window Showing
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    
-    // Open DevTools in development
-    if (isDev) {
-      mainWindow.webContents.openDevTools();
-    }
+    mainWindow.focus();
   });
 
-  // Handle window closed
+  // [FIX 5] Timeout Fallback (just in case)
+  setTimeout(() => {
+    if (mainWindow && !mainWindow.isVisible()) {
+      mainWindow.show();
+    }
+  }, 5000);
+
+  // Open DevTools automatically for you to see errors
+  mainWindow.webContents.openDevTools();
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+}
 
-  // Handle external links
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: 'deny' };
-  });
-};
-
-// App event handlers
 app.whenReady().then(() => {
   createWindow();
-  
-  // Create application menu
   createMenu();
-  
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  if (process.platform !== 'darwin') app.quit();
 });
 
-// Create application menu
-const createMenu = () => {
-  const template = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'New Transaction',
-          accelerator: 'CmdOrCtrl+N',
-          click: () => {
-            mainWindow.webContents.send('menu-new-transaction');
-          }
-        },
-        {
-          label: 'Import Data',
-          click: async () => {
-            const result = await dialog.showOpenDialog(mainWindow, {
-              properties: ['openFile'],
-              filters: [
-                { name: 'CSV Files', extensions: ['csv'] },
-                { name: 'All Files', extensions: ['*'] }
-              ]
-            });
-            
-            if (!result.canceled) {
-              mainWindow.webContents.send('menu-import-data', result.filePaths[0]);
-            }
-          }
-        },
-        { type: 'separator' },
-        {
-          label: 'Exit',
-          accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
-          click: () => {
-            app.quit();
-          }
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' }
-      ]
-    },
-    {
-      label: 'View',
-      submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { role: 'toggleDevTools' },
-        { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
-    },
-    {
-      label: 'Window',
-      submenu: [
-        { role: 'minimize' },
-        { role: 'close' }
-      ]
-    },
-    {
-      label: 'Help',
-      submenu: [
-        {
-          label: 'About FamBudget',
-          click: () => {
-            dialog.showMessageBox(mainWindow, {
-              type: 'info',
-              title: 'About FamBudget',
-              message: 'FamBudget Desktop v2.0.1',
-              detail: 'Advanced Family Budgeting Made Simple\n\nNew in v2.0.1:\n• Fixed Chart Visualization Issues\n• Enhanced Chart.js Integration\n• Improved Error Handling\n• Better Debugging & Logging\n• Comprehensive Demo Data\n• Multi-Currency Support (10+ currencies)\n• Income Tracker with Multiple Sources\n• Premium Dark Mode\n\nA complete desktop application for managing your family finances with beautiful charts, goal tracking, and expense management.'
-            });
-          }
-        },
-        {
-          label: 'Documentation',
-          click: () => {
-            shell.openExternal('https://github.com/fambudget/fambudget');
-          }
-        }
-      ]
-    }
-  ];
-
+function createMenu() {
+  const template = [{ role: 'fileMenu' }, { role: 'editMenu' }, { role: 'viewMenu' }, { role: 'windowMenu' }];
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
-};
+}
 
-// IPC handlers
-ipcMain.handle('get-app-version', () => {
-  return app.getVersion();
-});
+// IPC Handlers for Chart.js and Versioning
+ipcMain.handle('get-app-version', () => app.getVersion());
 
 ipcMain.handle('get-resources-path', () => {
+  // In dev mode, return the app directory; in production, return resources path
+  if (isDev || !app.isPackaged) {
+    return __dirname;
+  }
   return process.resourcesPath;
 });
 
 ipcMain.handle('get-chartjs-path', () => {
-  // Get path to Chart.js in extraResources
+  // In dev mode, Chart.js is in node_modules - return null to use fallback
+  if (isDev || !app.isPackaged) {
+    return null; // Let renderer use node_modules fallback
+  }
+  
+  // In production, Chart.js is in extraResources
   const resourcesPath = process.resourcesPath;
   const chartJsPath = path.join(resourcesPath, 'vendor', 'chart.js', 'chart.umd.js');
   
-  // Return the file:// URL for the path
-  // Normalize path separators for Windows
-  const normalizedPath = chartJsPath.replace(/\\/g, '/');
-  
-  // Handle Windows drive letters for file:// protocol
-  if (/^[A-Za-z]:/.test(normalizedPath)) {
-    // Windows: C:/path -> file:///C:/path (triple slash)
-    return `file:///${normalizedPath}`;
-  } else {
-    // Unix: /path -> file:///path (triple slash)
-    return `file://${normalizedPath}`;
+  // Check if file exists
+  if (!fs.existsSync(chartJsPath)) {
+    console.log('Chart.js not found at:', chartJsPath);
+    return null;
   }
+  
+  const normalizedPath = chartJsPath.replace(/\\/g, '/');
+  return /^[A-Za-z]:/.test(normalizedPath) ? `file:///${normalizedPath}` : `file://${normalizedPath}`;
 });
 
+// Dialog IPC Handlers (required by preload.js)
 ipcMain.handle('show-save-dialog', async (event, options) => {
-  const result = await dialog.showSaveDialog(mainWindow, options);
-  return result;
+  return await dialog.showSaveDialog(mainWindow, options);
 });
 
 ipcMain.handle('show-open-dialog', async (event, options) => {
-  const result = await dialog.showOpenDialog(mainWindow, options);
-  return result;
+  return await dialog.showOpenDialog(mainWindow, options);
 });
 
 ipcMain.handle('show-message-box', async (event, options) => {
-  const result = await dialog.showMessageBox(mainWindow, options);
-  return result;
+  return await dialog.showMessageBox(mainWindow, options);
 });
