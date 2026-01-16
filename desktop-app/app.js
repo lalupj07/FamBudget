@@ -1895,28 +1895,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             };
 
-            // Try paths in order
+            // Try paths in order - simplified for packaged app
             const paths = [
-                // Production: Get path from main process (most reliable)
-                async () => {
-                    try {
-                        const chartJsPath = await window.electronAPI?.getChartJsPath?.();
-                        if (chartJsPath) {
-                            console.log(`Attempting to load Chart.js from IPC path: ${chartJsPath}`);
-                            return tryLoad(chartJsPath, 'production IPC path');
-                        }
-                        // null means dev mode - skip silently
-                        return Promise.reject(new Error('skip'));
-                    } catch (error) {
-                        return Promise.reject(new Error('skip'));
-                    }
-                },
-                // Fallback: Manual construction from resources path (production only)
-                async () => {
-                    // Skip this in dev mode - go straight to node_modules
-                    return Promise.reject(new Error('skip'));
-                },
-                // Development: local node_modules
+                // Local file in app directory (works in both dev and production)
+                () => tryLoad('chart.umd.js', 'local app file'),
+                // Development: node_modules
                 () => tryLoad('node_modules/chart.js/dist/chart.umd.js', 'dev node_modules'),
                 // Fallback: CDN
                 () => tryLoad('https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js', 'CDN fallback')

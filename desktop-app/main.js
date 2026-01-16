@@ -39,11 +39,14 @@ function createWindow() {
   // [FIX 3] Absolute Path Loading
   const indexPath = path.join(__dirname, 'index.html');
   console.log('Loading app from:', indexPath);
+  console.log('__dirname:', __dirname);
+  console.log('File exists:', fs.existsSync(indexPath));
   
   mainWindow.loadFile(indexPath);
 
   // [FIX 4] Reliable Window Showing
   mainWindow.once('ready-to-show', () => {
+    console.log('ready-to-show fired');
     mainWindow.show();
     mainWindow.focus();
   });
@@ -51,12 +54,26 @@ function createWindow() {
   // [FIX 5] Timeout Fallback (just in case)
   setTimeout(() => {
     if (mainWindow && !mainWindow.isVisible()) {
+      console.log('Timeout: forcing window show');
       mainWindow.show();
     }
-  }, 5000);
+  }, 3000);
 
-  // Open DevTools automatically for you to see errors
+  // ALWAYS open DevTools to debug white screen
   mainWindow.webContents.openDevTools();
+  
+  // Log any load errors
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('Page failed to load:', errorCode, errorDescription);
+  });
+  
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('Page finished loading');
+  });
+  
+  mainWindow.webContents.on('console-message', (event, level, message) => {
+    console.log('Renderer:', message);
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;

@@ -1,6 +1,6 @@
 {
   "name": "fambudget-desktop",
-  "version": "5.0.0",
+  "version": "5.0.2",
   "description": "FamBudget v4.0.1 - Advanced Family Budgeting with Income Tracking, Multi-Currency Support and Analytics",
   "main": "main.js",
   "homepage": "./",
@@ -24,7 +24,7 @@
     "productName": "FamBudget",
     "copyright": "Copyright (c) 2025 GenXis Innovations. All rights reserved.",
     "directories": {
-      "output": "dist-v5.0.0"
+      "output": "dist-v5.0.2"
     },
     "asar": false,
     "asarUnpack": [
@@ -33,22 +33,17 @@
     ],
     "files": [
       "main.js",
-      "preload.js",
       "index.html",
       "app.js",
       "api.js",
       "styles.css",
-      "assets/**/*",
-      "node_modules/chart.js/dist/chart.umd.js"
+      "chart.umd.js",
+      "assets/**/*"
     ],
     "extraResources": [
       {
         "from": "assets/",
         "to": "assets/"
-      },
-      {
-        "from": "node_modules/chart.js/dist/chart.umd.js",
-        "to": "vendor/chart.js/chart.umd.js"
       }
     ],
     "win": {

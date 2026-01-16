@@ -13,12 +13,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="copyright" content="Copyright (c) 2025 GenXis Innovations. All rights reserved.">
     <meta name="author" content="GenXis Innovations">
-    <!-- CSP disabled for packaged app compatibility -->
     <title>FamBudget - Family Budgeting Made Simple</title>
+    
+    <!-- Critical inline styles for immediate display -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f5f5; 
+            color: #333; 
+            min-height: 100vh;
+        }
+        #app { display: block; }
+        .app-header { 
+            background: linear-gradient(135deg, #1976d2, #1565c0); 
+            color: white; 
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .header-content { display: flex; align-items: center; justify-content: space-between; max-width: 1400px; margin: 0 auto; }
+        .logo { display: flex; align-items: center; gap: 0.5rem; }
+        .logo h1 { font-size: 1.5rem; font-weight: 500; }
+        .nav-menu { display: flex; gap: 0.5rem; }
+        .nav-item { 
+            background: transparent; 
+            border: none; 
+            color: rgba(255,255,255,0.8); 
+            padding: 0.75rem 1rem; 
+            cursor: pointer; 
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.15); color: white; }
+        .app-main { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .material-icons { font-family: 'Material Icons', sans-serif; font-size: 24px; }
+        .loading-text { text-align: center; padding: 2rem; color: #666; }
+    </style>
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Chart.js will be loaded dynamically by app.js to handle both dev and production paths -->
 </head>
 <body>
     <div id="app">
