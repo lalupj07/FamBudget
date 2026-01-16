@@ -76,3 +76,11 @@ coverage/
 tmp/
 temp/
 
+
+# Large files
+postgresql-installer.exe
+.wrangler/
+desktop-app/dist-*/
+*.msi
+*.appx
+
