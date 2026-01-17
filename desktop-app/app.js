@@ -14,14 +14,6 @@ class FamBudgetApp {
         this.isDarkTheme = false;
         this.selectedCurrency = 'USD';
         
-        // Initialize API service (use API_URL from environment or localStorage)
-        const apiUrl = window.API_BASE_URL || localStorage.getItem('fambudget_api_url') || null;
-        this.api = window.ApiService ? new window.ApiService(apiUrl) : null;
-        
-        // Only use API if authenticated (has token) - prevents 401 errors
-        const hasAuthToken = !!localStorage.getItem('fambudget_token');
-        this.useAPI = !!this.api && !!apiUrl && hasAuthToken;
-        
         // Chart instances
         this.categoryChart = null;
         this.trendsChart = null;
@@ -45,51 +37,17 @@ class FamBudgetApp {
     }
 
     async init() {
-        console.log('🚀 FamBudget App Initializing...');
-        console.log('🔗 API URL:', window.API_BASE_URL || 'None (offline mode)');
-        console.log('🔐 Authenticated:', !!localStorage.getItem('fambudget_token'));
-        console.log('🌐 Use API:', this.useAPI);
-        
-        try {
-            this.setupEventListeners();
-            console.log('✅ Event listeners setup complete');
-            
-            this.loadTheme();
-            console.log('✅ Theme loaded');
-            
-            this.loadCurrency();
-            console.log('✅ Currency loaded');
-            
-            await this.loadData();
-            console.log('✅ Data loaded');
-            
-            this.render();
-            console.log('✅ App rendered successfully');
-            
-            // Test click handlers
-            const testBtn = document.querySelector('.nav-item');
-            if (testBtn) {
-                console.log('✅ Found navigation buttons');
-            } else {
-                console.error('❌ Navigation buttons not found');
-            }
-            
-        } catch (error) {
-            console.error('❌ App initialization failed:', error);
-        }
+        this.setupEventListeners();
+        this.loadTheme();
+        this.loadCurrency();
+        await this.loadData();
+        this.render();
     }
 
     setupEventListeners() {
-        console.log('🔧 Setting up event listeners...');
-        
         // Navigation (direct bindings)
-        const navItems = document.querySelectorAll('.nav-item');
-        console.log(`📍 Found ${navItems.length} navigation items`);
-        
-        navItems.forEach((item, index) => {
-            console.log(`📍 Setting up nav item ${index}:`, item.dataset.section);
+        document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => {
-                console.log('🖱️ Navigation clicked:', e.currentTarget.dataset.section);
                 e.preventDefault();
                 const section = e.currentTarget.dataset.section;
                 this.navigateToSection(section);
@@ -99,17 +57,13 @@ class FamBudgetApp {
         // Navigation (event delegation fallback)
         const navMenu = document.querySelector('.nav-menu');
         if (navMenu) {
-            console.log('📍 Setting up nav menu delegation');
             navMenu.addEventListener('click', (e) => {
                 const btn = e.target.closest('.nav-item');
                 if (!btn) return;
-                console.log('🖱️ Nav delegation clicked:', btn.dataset.section);
                 e.preventDefault();
                 const section = btn.dataset.section;
                 this.navigateToSection(section);
             });
-        } else {
-            console.error('❌ Nav menu not found');
         }
 
         // Theme toggle
@@ -397,34 +351,7 @@ class FamBudgetApp {
     }
 
     async loadDashboardData() {
-        // Try to load from API first (if available)
-        if (this.useAPI && this.api) {
-            try {
-                const dashboard = await this.api.getDashboard();
-                if (dashboard) {
-                    this.data.dashboard = dashboard;
-                    this.renderDashboard();
-                    return;
-                }
-            } catch (error) {
-                console.warn('Failed to load dashboard from API, using localStorage:', error);
-                // Fall back to localStorage
-            }
-        }
-        
-        // Try to load from localStorage
-        const savedDashboard = localStorage.getItem('fambudget-dashboard');
-        if (savedDashboard) {
-            try {
-                this.data.dashboard = JSON.parse(savedDashboard);
-                this.renderDashboard();
-                return;
-            } catch (error) {
-                console.error('Error parsing saved dashboard data:', error);
-            }
-        }
-
-        // Use comprehensive demo data for visual representation (fallback)
+        // Use comprehensive demo data for visual representation
         this.data.dashboard = {
             totalIncome: 8750,
             totalExpenses: 6230,
@@ -453,108 +380,11 @@ class FamBudgetApp {
                 { name: 'Travel', budget: 400, spent: 0, remaining: 400 }
             ]
         };
-        this.saveDashboardData();
         this.renderDashboard();
     }
 
-    saveDashboardData() {
-        try {
-            // Calculate dashboard data from actual transactions and accounts
-            const transactions = this.data.transactions || [];
-            const totalIncome = transactions
-                .filter(t => t.amount > 0)
-                .reduce((sum, t) => sum + t.amount, 0);
-            const totalExpenses = Math.abs(transactions
-                .filter(t => t.amount < 0)
-                .reduce((sum, t) => sum + t.amount, 0));
-            const netChange = totalIncome - totalExpenses;
-            const savingsRate = totalIncome > 0 ? Math.round((netChange / totalIncome) * 100) : 0;
-
-            // Get recent transactions (last 10)
-            const recentTransactions = [...transactions]
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 10)
-                .map(t => ({
-                    id: t.id,
-                    description: t.description,
-                    amount: t.amount,
-                    category: t.category,
-                    date: t.date
-                }));
-
-            // Calculate budget categories from transactions
-            const categorySpending = {};
-            transactions.forEach(t => {
-                if (t.amount < 0 && t.category) {
-                    categorySpending[t.category] = (categorySpending[t.category] || 0) + Math.abs(t.amount);
-                }
-            });
-
-            // Default budget amounts (can be customized later)
-            const budgetDefaults = {
-                'Food & Dining': 800,
-                'Utilities': 400,
-                'Transportation': 500,
-                'Entertainment': 300,
-                'Shopping': 250,
-                'Health & Fitness': 200,
-                'Education': 150,
-                'Travel': 400
-            };
-
-            const budgetCategories = Object.keys(budgetDefaults).map(name => ({
-                name,
-                budget: budgetDefaults[name],
-                spent: categorySpending[name] || 0,
-                remaining: budgetDefaults[name] - (categorySpending[name] || 0)
-            }));
-
-            this.data.dashboard = {
-                totalIncome,
-                totalExpenses,
-                netChange,
-                savingsRate,
-                recentTransactions,
-                budgetCategories
-            };
-
-            localStorage.setItem('fambudget-dashboard', JSON.stringify(this.data.dashboard));
-        } catch (error) {
-            console.error('Error saving dashboard data:', error);
-        }
-    }
-
     async loadTransactions() {
-        // Try to load from API first (if available)
-        if (this.useAPI && this.api) {
-            try {
-                const transactions = await this.api.getTransactions();
-                if (transactions && Array.isArray(transactions)) {
-                    this.data.transactions = transactions;
-                    this.updateCategorySelect();
-                    this.renderTransactions();
-                    return;
-                }
-            } catch (error) {
-                console.warn('Failed to load transactions from API, using localStorage:', error);
-                // Fall back to localStorage
-            }
-        }
-        
-        // Try to load from localStorage
-        const savedTransactions = localStorage.getItem('fambudget-transactions');
-        if (savedTransactions) {
-            try {
-                this.data.transactions = JSON.parse(savedTransactions);
-                this.updateCategorySelect();
-                this.renderTransactions();
-                return;
-            } catch (error) {
-                console.error('Error parsing saved transactions:', error);
-            }
-        }
-
-        // Use comprehensive demo data for visual representation (fallback)
+        // Use comprehensive demo data for visual representation
         this.data.transactions = [
             { id: 1, description: 'Monthly Salary - John', amount: 4500, category: 'Income', date: '2024-01-15', account: 'Primary Checking' },
             { id: 2, description: 'Freelance Web Design', amount: 1200, category: 'Income', date: '2024-01-14', account: 'Primary Checking' },
@@ -577,37 +407,12 @@ class FamBudgetApp {
             { id: 19, description: 'Online Course', amount: -89, category: 'Education', date: '2024-01-03', account: 'Credit Card' },
             { id: 20, description: 'Car Maintenance', amount: -245, category: 'Transportation', date: '2024-01-02', account: 'Primary Checking' }
         ];
-        this.saveTransactions();
         this.updateCategorySelect();
         this.renderTransactions();
     }
 
-    saveTransactions() {
-        try {
-            localStorage.setItem('fambudget-transactions', JSON.stringify(this.data.transactions));
-            // Update dashboard and reports when transactions change
-            this.saveDashboardData();
-            this.saveReports();
-        } catch (error) {
-            console.error('Error saving transactions:', error);
-        }
-    }
-
     async loadAccounts() {
-        // Try to load from localStorage first
-        const savedAccounts = localStorage.getItem('fambudget-accounts');
-        if (savedAccounts) {
-            try {
-                this.data.accounts = JSON.parse(savedAccounts);
-                this.renderAccounts();
-                this.updateAccountSelects();
-                return;
-            } catch (error) {
-                console.error('Error parsing saved accounts:', error);
-            }
-        }
-
-        // Use comprehensive demo data for visual representation (fallback)
+        // Use comprehensive demo data for visual representation
         this.data.accounts = [
             { id: 1, name: 'Primary Checking', type: 'checking', balance: 12450, color: '#1976d2' },
             { id: 2, name: 'Emergency Savings', type: 'savings', balance: 25000, color: '#388e3c' },
@@ -618,33 +423,12 @@ class FamBudgetApp {
             { id: 7, name: 'Retirement 401k', type: 'investment', balance: 125000, color: '#795548' },
             { id: 8, name: 'Kids College Fund', type: 'savings', balance: 15000, color: '#607d8b' }
         ];
-        this.saveAccounts();
         this.renderAccounts();
         this.updateAccountSelects();
     }
 
-    saveAccounts() {
-        try {
-            localStorage.setItem('fambudget-accounts', JSON.stringify(this.data.accounts));
-        } catch (error) {
-            console.error('Error saving accounts:', error);
-        }
-    }
-
     async loadGoals() {
-        // Try to load from localStorage first
-        const savedGoals = localStorage.getItem('fambudget-goals');
-        if (savedGoals) {
-            try {
-                this.data.goals = JSON.parse(savedGoals);
-                this.renderGoals();
-                return;
-            } catch (error) {
-                console.error('Error parsing saved goals:', error);
-            }
-        }
-
-        // Use comprehensive demo data for visual representation (fallback)
+        // Use comprehensive demo data for visual representation
         this.data.goals = [
             { id: 1, name: 'Emergency Fund (6 months)', target: 30000, current: 25000, deadline: '2024-12-31', priority: 'high' },
             { id: 2, name: 'European Vacation', target: 8000, current: 5400, deadline: '2024-07-15', priority: 'high' },
@@ -655,32 +439,11 @@ class FamBudgetApp {
             { id: 7, name: 'Retirement Boost', target: 50000, current: 12500, deadline: '2026-12-31', priority: 'low' },
             { id: 8, name: 'Home Renovation', target: 25000, current: 8750, deadline: '2025-03-31', priority: 'medium' }
         ];
-        this.saveGoals();
         this.renderGoals();
     }
 
-    saveGoals() {
-        try {
-            localStorage.setItem('fambudget-goals', JSON.stringify(this.data.goals));
-        } catch (error) {
-            console.error('Error saving goals:', error);
-        }
-    }
-
     async loadReports() {
-        // Try to load from localStorage first
-        const savedReports = localStorage.getItem('fambudget-reports');
-        if (savedReports) {
-            try {
-                this.data.reports = JSON.parse(savedReports);
-                this.renderReports();
-                return;
-            } catch (error) {
-                console.error('Error parsing saved reports:', error);
-            }
-        }
-
-        // Use comprehensive demo data for visual representation (fallback)
+        // Use comprehensive demo data for visual representation
         this.data.reports = {
             monthlyIncome: 8750,
             monthlyExpenses: 6230,
@@ -703,70 +466,11 @@ class FamBudgetApp {
                 { month: 'Mar 2024', income: 9200, expenses: 6450 }
             ]
         };
-        this.saveReports();
         this.renderReports();
     }
 
-    saveReports() {
-        try {
-            // Calculate reports from actual data
-            const transactions = this.data.transactions || [];
-            const monthlyIncome = transactions
-                .filter(t => t.amount > 0)
-                .reduce((sum, t) => sum + t.amount, 0);
-            const monthlyExpenses = Math.abs(transactions
-                .filter(t => t.amount < 0)
-                .reduce((sum, t) => sum + t.amount, 0));
-
-            // Calculate category breakdown
-            const categoryBreakdown = {};
-            transactions.forEach(t => {
-                if (t.amount < 0 && t.category) {
-                    categoryBreakdown[t.category] = (categoryBreakdown[t.category] || 0) + Math.abs(t.amount);
-                }
-            });
-
-            // Generate trends (last 6 months)
-            const trends = [];
-            const now = new Date();
-            for (let i = 5; i >= 0; i--) {
-                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-                // For demo, use actual data or estimates
-                trends.push({
-                    month: monthName,
-                    income: monthlyIncome * (1 + (Math.random() - 0.5) * 0.1),
-                    expenses: monthlyExpenses * (1 + (Math.random() - 0.5) * 0.1)
-                });
-            }
-
-            this.data.reports = {
-                monthlyIncome,
-                monthlyExpenses,
-                categoryBreakdown,
-                trends
-            };
-
-            localStorage.setItem('fambudget-reports', JSON.stringify(this.data.reports));
-        } catch (error) {
-            console.error('Error saving reports:', error);
-        }
-    }
-
     async loadIncome() {
-        // Try to load from localStorage first
-        const savedIncome = localStorage.getItem('fambudget-income');
-        if (savedIncome) {
-            try {
-                this.data.income = JSON.parse(savedIncome);
-                this.renderIncome();
-                return;
-            } catch (error) {
-                console.error('Error parsing saved income:', error);
-            }
-        }
-
-        // Use comprehensive demo data for visual representation (fallback)
+        // Use comprehensive demo data for visual representation
         this.data.income = [
             { id: 1, description: 'Monthly Salary - John', amount: 4500, source: 'Primary Job', type: 'recurring', frequency: 'monthly', date: '2024-01-15', account: 'Primary Checking' },
             { id: 2, description: 'Freelance Web Design', amount: 1200, source: 'Freelance Work', type: 'one-time', date: '2024-01-14', account: 'Business Checking' },
@@ -779,36 +483,11 @@ class FamBudgetApp {
             { id: 9, description: 'Stock Options', amount: 3200, source: 'Investment Portfolio', type: 'one-time', date: '2023-12-10', account: 'Investment Account' },
             { id: 10, description: 'Freelance Writing', amount: 600, source: 'Freelance Work', type: 'one-time', date: '2023-12-05', account: 'Primary Checking' }
         ];
-        this.saveIncome();
         this.renderIncome();
     }
 
-    saveIncome() {
-        try {
-            localStorage.setItem('fambudget-income', JSON.stringify(this.data.income));
-            // Update dashboard and reports when income changes
-            this.saveDashboardData();
-            this.saveReports();
-        } catch (error) {
-            console.error('Error saving income:', error);
-        }
-    }
-
     async loadIncomeSources() {
-        // Try to load from localStorage first
-        const savedIncomeSources = localStorage.getItem('fambudget-incomeSources');
-        if (savedIncomeSources) {
-            try {
-                this.data.incomeSources = JSON.parse(savedIncomeSources);
-                this.renderIncomeSources();
-                this.updateIncomeSourceSelects();
-                return;
-            } catch (error) {
-                console.error('Error parsing saved income sources:', error);
-            }
-        }
-
-        // Use comprehensive demo data for visual representation (fallback)
+        // Use comprehensive demo data for visual representation
         this.data.incomeSources = [
             { id: 1, name: 'Primary Job', type: 'salary', expectedAmount: 4500, color: '#4caf50' },
             { id: 2, name: 'Sarah\'s Job', type: 'salary', expectedAmount: 3800, color: '#2196f3' },
@@ -819,17 +498,8 @@ class FamBudgetApp {
             { id: 7, name: 'Consulting', type: 'business', expectedAmount: 1500, color: '#607d8b' },
             { id: 8, name: 'Online Store', type: 'business', expectedAmount: 850, color: '#e91e63' }
         ];
-        this.saveIncomeSources();
         this.renderIncomeSources();
         this.updateIncomeSourceSelects();
-    }
-
-    saveIncomeSources() {
-        try {
-            localStorage.setItem('fambudget-incomeSources', JSON.stringify(this.data.incomeSources));
-        } catch (error) {
-            console.error('Error saving income sources:', error);
-        }
     }
 
     navigateToSection(section) {
@@ -1143,33 +813,20 @@ class FamBudgetApp {
             date: document.getElementById('transactionDate').value
         };
 
-        try {
-            let newTransaction;
-            
-            // If using API, save to backend first
-            if (this.useAPI && this.api) {
-                newTransaction = await this.api.createTransaction(formData);
-                // Add to local data
-                this.data.transactions.unshift(newTransaction);
-            } else {
-                // Use localStorage (fallback)
-                newTransaction = {
-                    id: Date.now(),
-                    ...formData,
-                    account: this.data.accounts.find(acc => acc.id == formData.account)?.name || 'Unknown'
-                };
-                this.data.transactions.unshift(newTransaction);
-                await this.saveTransactions();
-            }
-            
-            this.updateCategorySelect();
-            this.renderTransactions();
-            this.hideModal();
-            this.showMessage('Transaction added successfully!');
-        } catch (error) {
-            console.error('Error adding transaction:', error);
-            this.showMessage('Error adding transaction: ' + (error.message || 'Unknown error'));
-        }
+        // Add to local data
+        const newTransaction = {
+            id: Date.now(),
+            ...formData,
+            account: this.data.accounts.find(acc => acc.id == formData.account)?.name || 'Unknown'
+        };
+
+        this.data.transactions.unshift(newTransaction);
+        this.updateCategorySelect();
+        this.renderTransactions();
+        this.hideModal();
+
+        // Show success message
+        this.showMessage('Transaction added successfully!');
     }
 
     async addAccount() {
@@ -1187,7 +844,6 @@ class FamBudgetApp {
         };
 
         this.data.accounts.push(newAccount);
-        this.saveAccounts();
         this.renderAccounts();
         this.updateAccountSelects();
         this.hideModal();
@@ -1212,7 +868,6 @@ class FamBudgetApp {
         };
 
         this.data.goals.push(newGoal);
-        this.saveGoals();
         this.renderGoals();
         this.hideModal();
 
@@ -1238,7 +893,6 @@ class FamBudgetApp {
         };
 
         this.data.income.unshift(newIncome);
-        this.saveIncome();
         this.renderIncome();
         this.renderIncomeSources();
         this.hideModal();
@@ -1262,7 +916,6 @@ class FamBudgetApp {
         };
 
         this.data.incomeSources.push(newSource);
-        this.saveIncomeSources();
         this.renderIncomeSources();
         this.updateIncomeSourceSelects();
         this.hideModal();
@@ -1283,24 +936,12 @@ class FamBudgetApp {
         }
     }
 
-    async deleteTransaction(id) {
+    deleteTransaction(id) {
         if (confirm('Are you sure you want to delete this transaction?')) {
-            try {
-                // If using API, delete from backend first
-                if (this.useAPI && this.api) {
-                    await this.api.deleteTransaction(id);
-                }
-                
-                // Remove from local data
-                this.data.transactions = this.data.transactions.filter(t => t.id !== id);
-                await this.saveTransactions();
-                this.updateCategorySelect();
-                this.renderTransactions();
-                this.showMessage('Transaction deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting transaction:', error);
-                this.showMessage('Error deleting transaction: ' + (error.message || 'Unknown error'));
-            }
+            this.data.transactions = this.data.transactions.filter(t => t.id !== id);
+            this.updateCategorySelect();
+            this.renderTransactions();
+            this.showMessage('Transaction deleted successfully!');
         }
     }
 
@@ -1319,7 +960,6 @@ class FamBudgetApp {
     deleteAccount(id) {
         if (confirm('Are you sure you want to delete this account?')) {
             this.data.accounts = this.data.accounts.filter(a => a.id !== id);
-            this.saveAccounts();
             this.renderAccounts();
             this.updateAccountSelects();
             this.showMessage('Account deleted successfully!');
@@ -1342,7 +982,6 @@ class FamBudgetApp {
     deleteGoal(id) {
         if (confirm('Are you sure you want to delete this goal?')) {
             this.data.goals = this.data.goals.filter(g => g.id !== id);
-            this.saveGoals();
             this.renderGoals();
             this.showMessage('Goal deleted successfully!');
         }
@@ -1368,7 +1007,6 @@ class FamBudgetApp {
     deleteIncome(id) {
         if (confirm('Are you sure you want to delete this income record?')) {
             this.data.income = this.data.income.filter(i => i.id !== id);
-            this.saveIncome();
             this.renderIncome();
             this.renderIncomeSources();
             this.showMessage('Income deleted successfully!');
@@ -1394,8 +1032,6 @@ class FamBudgetApp {
                 // Remove associated income records
                 this.data.income = this.data.income.filter(i => i.source !== source.name);
                 this.data.incomeSources = this.data.incomeSources.filter(s => s.id !== id);
-                this.saveIncome();
-                this.saveIncomeSources();
                 this.renderIncome();
                 this.renderIncomeSources();
                 this.updateIncomeSourceSelects();
@@ -1895,11 +1531,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             };
 
-            // Try paths in order - simplified for packaged app
+            // Try paths in order
             const paths = [
-                // Local file in app directory (works in both dev and production)
-                () => tryLoad('chart.umd.js', 'local app file'),
-                // Development: node_modules
+                // Production: Get path from main process (most reliable)
+                async () => {
+                    try {
+                        const chartJsPath = await window.electronAPI?.getChartJsPath?.();
+                        if (chartJsPath) {
+                            console.log(`Attempting to load Chart.js from IPC path: ${chartJsPath}`);
+                            return tryLoad(chartJsPath, 'production IPC path');
+                        }
+                    } catch (error) {
+                        console.warn('IPC path unavailable:', error);
+                    }
+                    return Promise.reject(new Error('IPC path unavailable'));
+                },
+                // Fallback: Manual construction from resources path
+                async () => {
+                    try {
+                        const resourcesPath = await window.electronAPI?.getResourcesPath?.();
+                        if (resourcesPath) {
+                            // Normalize Windows path for file:// protocol
+                            let normalizedPath = resourcesPath.replace(/\\/g, '/');
+                            
+                            // Handle Windows drive letters (C:, D:, etc.)
+                            if (/^[A-Za-z]:/.test(normalizedPath)) {
+                                // Windows path with drive letter: C:/path -> /C:/path for file://
+                                normalizedPath = '/' + normalizedPath;
+                            }
+                            
+                            // Construct file:// URL (always use triple slash for absolute paths)
+                            const filePath = `file://${normalizedPath}/vendor/chart.js/chart.umd.js`;
+                            console.log(`Attempting to load Chart.js from resources path: ${filePath}`);
+                            return tryLoad(filePath, 'production extraResources');
+                        }
+                    } catch (error) {
+                        console.warn('Resources path unavailable:', error);
+                    }
+                    return Promise.reject(new Error('No resources path available'));
+                },
+                // Development: local node_modules
                 () => tryLoad('node_modules/chart.js/dist/chart.umd.js', 'dev node_modules'),
                 // Fallback: CDN
                 () => tryLoad('https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js', 'CDN fallback')
@@ -1916,10 +1587,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await paths[index]();
                     resolve();
                 } catch (error) {
-                    // Only log real errors, not intentional skips
-                    if (error.message !== 'skip') {
-                        console.warn(`Chart.js path ${index + 1} unavailable, trying next...`);
-                    }
+                    console.warn(`Failed to load Chart.js from path ${index + 1}:`, error.message);
                     attemptLoad(index + 1);
                 }
             };
