@@ -4,83 +4,260 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment files
-.env
-.env.local
-.env.*.local
-backend/.env
-
 # Build outputs
 dist/
-build/
 dist-*/
-*.tsbuildinfo
+build/
+*.exe
+*.msi
+*.appx
+*.appxbundle
+*.blockmap
+win-unpacked/
+__appx-*/
 
-# Desktop app build artifacts
-# Exclude all dist folders by default
-desktop-app/dist-*/
-
-# But include v3.5.1 installer files for distribution
-!desktop-app/dist-v3.5.1/
-desktop-app/dist-v3.5.1/**/*
-!desktop-app/dist-v3.5.1/FamBudget-3.5.1-x64.exe
-!desktop-app/dist-v3.5.1/FamBudget-3.5.1-x64.msi
-!desktop-app/dist-v3.5.1/FamBudget-3.5.1-x64.exe.blockmap
-
-# Certificate files (sensitive)
-desktop-app/*.pfx
-desktop-app/*.p12
-desktop-app/*.cer
-desktop-app/*.pem
-desktop-app/dist/
-
-# Certificate files (sensitive)
-*.pfx
-*.p12
-*.cer
-*.pem
-*.key
-fambudget-cert.pfx
-
-# IDE
+# IDE and editors
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
+.cursor/
+.expo/
 
-# Logs
-logs/
-*.log
-
-# Database
-*.db
-*.sqlite
-
-# Mobile
-mobile/.expo/
-mobile/.expo-shared/
-mobile/dist/
-mobile/web-build/
-
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Testing
-coverage/
-.nyc_output/
+# Logs
+*.log
+logs/
 
-# Temporary
-tmp/
-temp/
+# Environment variables
+.env
+.env.local
+.env.*.local
 
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.cache
 
-# Large files
-postgresql-installer.exe
-.wrangler/
+# Documentation files (keep only essential)
+*.md
+!README.md
+!LICENSE
+!CONTRIBUTING.md
+
+# Batch/PowerShell scripts (development only)
+*.bat
+*.ps1
+*.sh
+
+# Test files
+test-*.html
+debug.html
+simple.html
+test-minimal.html
+
+# Backup files
+*.old
+*.orig
+
+# Certificate files
+*.pfx
+*.p12
+*.key
+*.cert
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# OneDrive files
+~$*
+
+# Build artifacts
+*.asar
+packages/
+releases/
+
+# Documentation that's not essential
+*-FIXED.md
+*-STATUS.md
+*-GUIDE.md
+*-CHECKLIST.md
+*-SOLUTION.md
+*-SUMMARY.md
+*-PROGRESS.md
+*-COMPLETE.md
+*-READY.md
+*-INSTRUCTIONS.md
+*-TEMPLATE.md
+*-QUICK*.md
+*-TEST*.md
+*-DEPLOY*.md
+*-SETUP*.md
+*-BUILD*.md
+*-STORE*.md
+*-SUBMIT*.md
+*-NEXT*.md
+*-READY*.md
+*-STEPS*.md
+*-REQUIREMENTS.md
+*-OPTIONS.md
+*-ALTERNATIVE*.md
+*-FIND*.md
+*-GET*.md
+*-PACKAGE*.md
+*-CERTIFICATION*.md
+*-PRIVACY*.md
+*-TROUBLESHOOTING*.md
+*-WINDOWS*.md
+*-MICROSOFT*.md
+*-RAILWAY*.md
+*-BACKEND*.md
+*-FRONTEND*.md
+*-MOBILE*.md
+*-QUICKSTART*.md
+*-START*.md
+*-FINAL*.md
+*-ALL*.md
+*-ISSUES*.md
+*-ERROR*.md
+*-DEBUG*.md
+*-HEALTH*.md
+*-SHARE*.md
+*-CHECK*.md
+*-WHY*.md
+*-CURRENT*.md
+*-PROJECT*.md
+*-COMPLETE*.md
+*-REBUILD*.md
+*-NOTES*.md
+*-NOTICE*.md
+*-FEATURES*.md
+*-CONTACT*.md
+*-CONTRIBUTING*.md
+*-LICENSING*.md
+
+# Keep essential docs
+!README.md
+!LICENSE
+!CONTRIBUTING.md
+!CHANGELOG.md
+
+# Desktop app specific
 desktop-app/dist-*/
-*.msi
-*.appx
+desktop-app/*.bat
+desktop-app/*.ps1
+desktop-app/*.nsh
+desktop-app/test*.html
+desktop-app/debug.html
+desktop-app/simple.html
+desktop-app/full-index.html
+desktop-app/index-full.html
+desktop-app/FamBudget
+desktop-app/FamBudget-*.bat
+desktop-app/install-*.bat
+desktop-app/start-*.bat
+desktop-app/*-fixed.bat
+desktop-app/*-FIXED.bat
 
+# Mobile app specific
+mobile/package-lock.json
+mobile/*.bat
+mobile/*.ps1
+mobile/assets/favicon.png
+mobile/*-REDESIGN*.md
+mobile/*-GUIDE.md
+mobile/*-TEST*.md
+mobile/*-START*.md
+mobile/*-EXPO*.md
+mobile/*-CORRECTLY*.md
+mobile/fix-*.ps1
+mobile/test-*.bat
+mobile/start-*.bat
+mobile/start-*.ps1
+
+# Backend specific
+backend/package-lock.json
+backend/*.json.backup
+
+# Root level documentation
+ALL-*.md
+APP-*.md
+BLANK-*.md
+BUILD-*.md
+CHECK-*.md
+CLOUD-*.md
+COMPLETE-*.md
+COMPREHENSIVE-*.md
+CONTACT.md
+COPY-*.md
+CREATE-*.md
+CURRENT-*.md
+DEBUG-*.md
+DEPLOY-*.md
+DISABLE-*.md
+ENV-*.md
+FEATURES.md
+FINAL-*.md
+FIND-*.md
+FIX-*.md
+GITHUB-*.md
+HEALTH-*.md
+INSTALL-*.md
+JWT_*.txt
+LICENSING.md
+LOCALE-*.md
+MOBILE-*.md
+NOTICE
+PACKAGES-*.md
+POSTGRESQL-*.exe
+QUICK-*.md
+RAILWAY-*.md
+README-*.md
+REBUILD-*.md
+SETUP-*.md
+SHARE-*.md
+START-*.md
+TEST-*.md
+UPLOAD-*.md
+WHY-*.md
+WINDOW-*.md
+WINDOWS_*.md
+
+# Keep essential
+!README.md
+!LICENSE
+!CONTRIBUTING.md
+
+# Other files
+*.txt
+!LICENSE.txt
+ENCRYPTION_KEY.txt
+JWT_SECRET.txt
+RAILWAY-VARIABLES-COMPLETE.txt
+ENV-VARIABLES-TEMPLATE.txt
+COPY-PASTE-VARIABLES.txt
+
+# HTML files (except main app)
+fambudget-working.html
+*.html
+!desktop-app/index.html
+
+# TypeScript config (if not needed)
+tsconfig.json
+
+# Database scripts
+create-database.ps1
+setup-database.sql
+*.sql
+
+# Installer files
+postgresql-installer.exe
