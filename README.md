@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![FamBudget Logo](screenshots/logo.png)
+![FamBudget Logo](screenshots/logo.jpg)
 
 ### **Take Control of Your Family's Finances**
 
