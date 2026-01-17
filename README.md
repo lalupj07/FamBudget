@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![FamBudget](desktop-app/assets/icon.png)
+![FamBudget Logo](screenshots/logo.png)
 
 ### **Take Control of Your Family's Finances**
 
@@ -39,6 +39,12 @@
 
 ### 💵 **Income & Expense Management**
 
+<div align="center">
+
+![Income Tracker](screenshots/income.png)
+
+</div>
+
 <table>
 <tr>
 <td width="50%">
@@ -47,26 +53,39 @@
 - Track income from various sources
 - Set up recurring income automatically
 - Monitor income trends over time
+- Visual income source cards with progress tracking
 
 **Smart Categorization**
 - Custom expense categories
 - Automatic categorization
 - Category-based filtering
+- Color-coded category system
 
 </td>
 <td width="50%">
 
 **Transaction History**
 - Complete transaction timeline
-- Advanced filtering options
+- Advanced filtering by account, category, and date range
 - Search and sort capabilities
 - Export to CSV
+- Quick edit and delete actions
 
 </td>
 </tr>
 </table>
 
 ### 📊 **Budgeting & Analytics**
+
+<div align="center">
+
+![Dashboard](screenshots/dashboard.png)
+*Dashboard with key financial metrics and spending breakdown*
+
+![Reports](screenshots/reports.png)
+*Advanced analytics with monthly trends and category breakdown*
+
+</div>
 
 <table>
 <tr>
@@ -76,11 +95,13 @@
 - Interactive budget sliders
 - Real-time budget calculations
 - Category-wise budget allocation
+- Spending by category donut chart
 
 **Spending Analysis**
-- Category breakdown charts
-- Monthly spending trends
+- Category breakdown bar charts
+- Monthly spending trends line charts
 - Comparison reports
+- Visual progress indicators
 
 </td>
 <td width="50%">
@@ -90,6 +111,7 @@
 - Income vs Expense analysis
 - Savings rate tracking
 - Custom date ranges
+- Export functionality
 
 </td>
 </tr>
@@ -97,11 +119,19 @@
 
 ### 🎯 **Goal Management**
 
-- **Savings Goals** - Set multiple savings targets
-- **Progress Tracking** - Visual progress indicators
-- **Deadline Management** - Track goal deadlines
-- **Priority Levels** - Organize by importance
+<div align="center">
+
+![Savings Goals](screenshots/goals.png)
+*Track multiple savings goals with progress bars and priority levels*
+
+</div>
+
+- **Savings Goals** - Set multiple savings targets with target amounts
+- **Progress Tracking** - Visual progress bars showing completion percentage
+- **Deadline Management** - Track goal deadlines with countdown timers
+- **Priority Levels** - Organize by HIGH, MEDIUM, or LOW priority
 - **Contribution Tracking** - Monitor contributions over time
+- **Goal Cards** - Beautiful card-based interface for easy goal management
 
 ### 💱 **Multi-Currency Support**
 
@@ -186,6 +216,12 @@ Supported currencies include:
 
 ## 🚀 Quick Start Guide
 
+<div align="center">
+
+![Dashboard](screenshots/dashboard.png)
+
+</div>
+
 ### **Step 1: Launch the Application**
 ```
 Open FamBudget from Start Menu or Desktop shortcut
@@ -193,31 +229,58 @@ Open FamBudget from Start Menu or Desktop shortcut
 
 ### **Step 2: Add Your First Transaction**
 ```
-1. Click "Add Transaction" button (top right)
+1. Click "+ Add Transaction" button (top right)
 2. Fill in description, amount, category, and date
 3. Click "Save"
 ```
 
+<div align="center">
+
+![Transactions](screenshots/transactions.png)
+
+</div>
+
 ### **Step 3: Set Up Accounts**
 ```
 1. Go to "Accounts" section
-2. Add your bank accounts
-3. Set initial balances
+2. Click "+ Add Account" button
+3. Add your bank accounts (Checking, Savings, Credit, Investment)
+4. Set initial balances
 ```
+
+<div align="center">
+
+![Accounts](screenshots/accounts.png)
+
+</div>
 
 ### **Step 4: Create Budget Goals**
 ```
 1. Navigate to "Goals" section
-2. Click "Add Goal"
-3. Set target amount and deadline
+2. Click "+ Add Goal" button
+3. Set target amount, deadline, and priority level
+4. Track your progress visually
 ```
+
+<div align="center">
+
+![Goals](screenshots/goals.png)
+
+</div>
 
 ### **Step 5: View Analytics**
 ```
-1. Check "Dashboard" for overview
-2. Visit "Reports" for detailed charts
+1. Check "Dashboard" for overview with key metrics
+2. Visit "Reports" for detailed charts and trends
 3. Explore spending by category
+4. Monitor income vs expenses
 ```
+
+<div align="center">
+
+![Reports](screenshots/reports.png)
+
+</div>
 
 ---
 
@@ -226,20 +289,28 @@ Open FamBudget from Start Menu or Desktop shortcut
 <div align="center">
 
 ### 📊 Dashboard View
-![Dashboard](desktop-app/assets/Square150x150Logo.png)
-*Comprehensive overview of your financial health*
+![Dashboard](screenshots/dashboard.png)
+*Comprehensive overview of your financial health with key metrics, spending by category chart, and recent transactions*
 
 ### 💳 Transaction Management
-![Transactions](desktop-app/assets/Square150x150Logo.png)
-*Easy transaction entry and management*
+![Transactions](screenshots/transactions.png)
+*Easy transaction entry and management with advanced filtering options*
 
 ### 📈 Analytics & Reports
-![Reports](desktop-app/assets/Square150x150Logo.png)
-*Detailed charts and financial insights*
+![Reports](screenshots/reports.png)
+*Detailed charts and financial insights including monthly trends and category breakdown*
 
-### 🎯 Goals Tracking
-![Goals](desktop-app/assets/Square150x150Logo.png)
-*Set and achieve your savings goals*
+### 🎯 Savings Goals
+![Goals](screenshots/goals.png)
+*Set and achieve your savings goals with progress tracking and priority management*
+
+### 💰 Accounts Overview
+![Accounts](screenshots/accounts.png)
+*Manage multiple accounts including checking, savings, credit cards, and investments*
+
+### 💵 Income Tracker
+![Income](screenshots/income.png)
+*Track multiple income sources with expected vs actual income monitoring*
 
 </div>
 
