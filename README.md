@@ -332,7 +332,7 @@ Open FamBudget from Start Menu or Desktop shortcut
 
 - **Company Name:** GenXis Innovations
 - **Email:** genxisinnovation@outlook.com
-- **Website:** https://github.com/lalupj07/GenXlink
+- **Website:** www.genxisinnovation.in
 - **License:** Apache License 2.0
 - **Copyright:** © 2025 GenXis Innovations. All rights reserved.
 
@@ -475,7 +475,7 @@ This project is licensed under the **Apache License 2.0** - see the [LICENSE](LI
 
 <div align="center">
 
-## 🎉 Made with ❤️ by [GenXis Innovations](https://github.com/lalupj07/GenXlink)
+## 🎉 Made with ❤️ by [GenXis Innovations](https://www.genxisinnovation.in)
 
 **Empowering families to take control of their finances**
 
