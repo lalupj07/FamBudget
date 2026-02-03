@@ -1,0 +1,2222 @@
+<!DOCTYPE html>
+<!--
+  Copyright (c) 2025 GenXis Innovations
+  All rights reserved.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="copyright" content="Copyright (c) 2025 GenXis Innovations. All rights reserved.">
+    <meta name="author" content="GenXis Innovations">
+    <meta name="contact" content="genxisinnovation@outlook.com">
+    <title>FamBudget - Family Budgeting Made Simple</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round&family=Material+Icons+Outlined&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <!-- Chart.js - Load from CDN as fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <!-- Chart.js will also be loaded dynamically by app.js to handle both dev and production paths -->
+</head>
+<body>
+    <!-- Opening Animation & Quick Tour Overlay -->
+    <div id="welcomeOverlay" class="welcome-overlay">
+        <div class="welcome-container">
+            <div class="floating-elements">
+                <div class="floating-icon">💰</div>
+                <div class="floating-icon">📊</div>
+                <div class="floating-icon">💳</div>
+                <div class="floating-icon">📈</div>
+                <div class="floating-icon">🏦</div>
+            </div>
+
+            <div class="splash-content">
+                <div class="logo-section">
+                    <div class="logo">💰 FamBudget</div>
+                    <div class="tagline">Your Complete Family Financial Solution</div>
+                </div>
+
+                <div class="loading-section">
+                    <div class="loading-text">Initializing your financial dashboard...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="spinner"></div>
+                </div>
+
+                <button class="quick-tour-btn" onclick="window.showQuickTour()">
+                    🎯 Quick Tour
+                </button>
+
+                <div class="version-info">
+                    Version 4.5.0
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Tour Modal -->
+        <div class="quick-tour-modal" id="quickTourModal">
+            <div class="tour-content">
+                <h2>🎯 Welcome to FamBudget v4.5.0!</h2>
+                <p>Experience the next generation of family budget management with our completely redesigned interface and powerful features.</p>
+                
+                <ul class="tour-features">
+                    <li><strong>Perfect Input System:</strong> All text input fields now work flawlessly with visible cursors</li>
+                    <li><strong>Smart Workflow:</strong> Delete items and immediately add new ones without any issues</li>
+                    <li><strong>Crash-Proof:</strong> Bulletproof error handling ensures the app never crashes</li>
+                    <li><strong>Beautiful Analytics:</strong> Interactive charts and detailed financial insights</li>
+                    <li><strong>Multi-Account Support:</strong> Manage all your family accounts in one place</li>
+                    <li><strong>Goal Tracking:</strong> Set and achieve your financial goals with progress tracking</li>
+                </ul>
+
+                <div class="tour-actions">
+                    <div class="dummy-data-section">
+                        <p><strong>🧹 First-Time Setup:</strong> Would you like to clear all sample data and start fresh?</p>
+                        <div class="dummy-data-buttons">
+                            <button class="tour-btn danger" onclick="deleteAllDummyData()">
+                                <span class="material-icons">delete_sweep</span>
+                                Clear All Data
+                            </button>
+                            <button class="tour-btn secondary" onclick="keepDummyData()">
+                                <span class="material-icons">keep</span>
+                                Keep Sample Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tour-buttons">
+                    <button class="tour-btn secondary" onclick="skipTour()">Skip Tour</button>
+                    <button class="tour-btn primary" onclick="startApp()">Start Using FamBudget</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="material-icons">account_balance_wallet</span>
+                    <h1>FamBudget</h1>
+                </div>
+                <div class="header-status">
+                    <span id="offlineStatus" class="status-online">
+                        <span class="material-icons" style="font-size: 16px; vertical-align: middle;">cloud_done</span>
+                        Online
+                    </span>
+                </div>
+                <nav class="nav-menu">
+                    <button class="nav-item active" data-section="dashboard">
+                        <span class="material-icons">dashboard</span>
+                        Dashboard
+                    </button>
+                    <button class="nav-item" data-section="transactions">
+                        <span class="material-icons">receipt_long</span>
+                        Transactions
+                    </button>
+                    <button class="nav-item" data-section="accounts">
+                        <span class="material-icons">account_balance</span>
+                        Accounts
+                    </button>
+                    <button class="nav-item" data-section="income">
+                        <span class="material-icons">attach_money</span>
+                        Income
+                    </button>
+                    <button class="nav-item" data-section="goals">
+                        <span class="material-icons">flag</span>
+                        Goals
+                    </button>
+                    <button class="nav-item" data-section="reports">
+                        <span class="material-icons">analytics</span>
+                        Reports
+                    </button>
+                    <button class="nav-item" data-section="settings">
+                        <span class="material-icons">settings</span>
+                        Settings
+                    </button>
+                </nav>
+                <div class="header-features" id="headerFeatures">
+                    <button type="button" class="header-feature-btn" id="headerRecurringBtn" title="Recurring Transactions" data-modal="recurringTransactionModal">
+                        <span class="material-icons">repeat</span>
+                    </button>
+                    <button type="button" class="header-feature-btn" id="headerTemplateBtn" title="Templates" data-modal="templateModal">
+                        <span class="material-icons">bookmark</span>
+                    </button>
+                    <button type="button" class="header-feature-btn" id="headerDebtBtn" title="Debt Tracker" data-modal="debtModal">
+                        <span class="material-icons">account_balance_wallet</span>
+                    </button>
+                    <button type="button" class="header-feature-btn" id="headerCalendarBtn" title="Calendar" data-modal="calendarModal">
+                        <span class="material-icons">calendar_today</span>
+                    </button>
+                    <button type="button" class="header-feature-btn" id="headerForecastBtn" title="Forecast" data-modal="forecastModal">
+                        <span class="material-icons">trending_up</span>
+                    </button>
+                    <button type="button" class="header-feature-btn" id="headerSettingsBtn" title="Advanced Settings" data-modal="enhancedSettingsModal">
+                        <span class="material-icons">tune</span>
+                    </button>
+                </div>
+                <div class="header-actions">
+                    <div class="currency-selector">
+                        <select id="currencySelect" class="currency-dropdown">
+                            <option value="USD">$ USD</option>
+                            <option value="EUR">€ EUR</option>
+                            <option value="GBP">£ GBP</option>
+                            <option value="JPY">¥ JPY</option>
+                            <option value="CAD">C$ CAD</option>
+                            <option value="AUD">A$ AUD</option>
+                            <option value="CHF">CHF</option>
+                            <option value="CNY">¥ CNY</option>
+                            <option value="INR">₹ INR</option>
+                            <option value="BRL">R$ BRL</option>
+                        </select>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle">
+                        <span class="material-icons">dark_mode</span>
+                    </button>
+                    <button class="add-transaction-btn" id="addTransactionBtn">
+                        <span class="material-icons">add</span>
+                        Add Transaction
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <div class="date-range">
+                        <select id="dateRange">
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Period Totals Tabs -->
+                <div class="period-tabs">
+                    <button class="period-tab active" data-period="daily">
+                        <span class="material-icons">today</span>
+                        Daily
+                    </button>
+                    <button class="period-tab" data-period="monthly">
+                        <span class="material-icons">calendar_month</span>
+                        Monthly
+                    </button>
+                    <button class="period-tab" data-period="yearly">
+                        <span class="material-icons">event</span>
+                        Yearly
+                    </button>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards dashboard-widget" id="summary-cards" data-widget-id="summary-cards">
+                    <div class="summary-card income">
+                        <div class="card-icon">
+                            <span class="material-icons">trending_up</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Income</h3>
+                            <p class="amount" id="totalIncome">$0</p>
+                            <p class="period-label" id="incomePeriodLabel">This Month</p>
+                        </div>
+                    </div>
+                    <div class="summary-card expense">
+                        <div class="card-icon">
+                            <span class="material-icons">trending_down</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Expenses</h3>
+                            <p class="amount" id="totalExpenses">$0</p>
+                            <p class="period-label" id="expensePeriodLabel">This Month</p>
+                        </div>
+                    </div>
+                    <div class="summary-card savings">
+                        <div class="card-icon">
+                            <span class="material-icons">savings</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Net Change</h3>
+                            <p class="amount" id="netChange">$0</p>
+                            <p class="period-label" id="netChangePeriodLabel">This Month</p>
+                        </div>
+                    </div>
+                    <div class="summary-card rate">
+                        <div class="card-icon">
+                            <span class="material-icons">percent</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>Savings Rate</h3>
+                            <p class="amount" id="savingsRate">0%</p>
+                            <p class="period-label">This Month</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Warnings Alert -->
+                <div class="budget-warnings dashboard-widget" id="budget-warnings" data-widget-id="budget-warnings" style="display: none;">
+                    <div class="warning-header">
+                        <span class="material-icons">warning</span>
+                        <h3>Budget Warnings</h3>
+                        <div class="widget-actions">
+                            <button class="widget-action-btn" onclick="app.toggleWidget('budget-warnings')" title="Hide Widget">
+                                <span class="material-icons">visibility_off</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="warnings-list" id="warningsList"></div>
+                </div>
+
+                <!-- Charts and Recent Activity -->
+                <div class="dashboard-grid" id="dashboardGrid">
+                    <div class="chart-container dashboard-widget" id="category-chart" data-widget-id="category-chart">
+                        <div class="widget-header">
+                            <h3>Spending by Category</h3>
+                            <div class="widget-actions">
+                                <button class="widget-action-btn" onclick="app.toggleWidget('category-chart')" title="Hide Widget">
+                                    <span class="material-icons">visibility_off</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart" id="categoryChart"></div>
+                    </div>
+                    <div class="recent-activity dashboard-widget" id="recent-transactions" data-widget-id="recent-transactions">
+                        <div class="widget-header">
+                            <h3>Recent Transactions</h3>
+                            <div class="widget-actions">
+                                <button class="widget-action-btn" onclick="app.toggleWidget('recent-transactions')" title="Hide Widget">
+                                    <span class="material-icons">visibility_off</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="transaction-list" id="recentTransactions"></div>
+                    </div>
+                </div>
+
+                <!-- Budget Overview -->
+                <div class="budget-overview dashboard-widget" id="budget-overview" data-widget-id="budget-overview">
+                    <div class="widget-header">
+                        <h3>Budget Overview</h3>
+                        <div class="widget-actions">
+                            <button class="widget-action-btn" onclick="app.toggleWidget('budget-overview')" title="Hide Widget">
+                                <span class="material-icons">visibility_off</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="budget-categories" id="budgetCategories"></div>
+                </div>
+            </section>
+
+            <!-- Transactions Section -->
+            <section id="transactions" class="content-section">
+                <div class="section-header">
+                    <h2>Transactions <span id="transactionCount" style="font-size: 0.7em; color: #666; font-weight: normal;"></span></h2>
+                    <div class="section-actions">
+                        <div class="search-box">
+                            <span class="material-icons">search</span>
+                            <input type="text" id="transactionSearch" placeholder="Search transactions...">
+                        </div>
+                        <button class="btn btn-secondary" onclick="app.showModal('templateModal')" title="Use Template">
+                            <span class="material-icons">bookmark</span>
+                            Templates
+                        </button>
+                        <button class="btn btn-secondary" onclick="app.showModal('recurringTransactionModal')" title="Recurring">
+                            <span class="material-icons">repeat</span>
+                            Recurring
+                        </button>
+                        <button class="btn btn-secondary" onclick="app.showModal('splitTransactionModal')" title="Split Transaction" id="splitTransactionBtn" style="display: none;">
+                            <span class="material-icons">call_split</span>
+                            Split
+                        </button>
+                        <button class="btn btn-primary" id="addTransactionBtn2">
+                            <span class="material-icons">add</span>
+                            Add Transaction
+                        </button>
+                        <button class="btn btn-secondary" id="importBtn">
+                            <span class="material-icons">upload</span>
+                            Import
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Account:</label>
+                        <select id="accountFilter">
+                            <option value="">All Accounts</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Category:</label>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Date Range:</label>
+                        <input type="date" id="startDate">
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="transactions-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Accounts Section -->
+            <section id="accounts" class="content-section">
+                <div class="section-header">
+                    <h2>Accounts</h2>
+                    <button class="btn btn-primary" id="addAccountBtn">
+                        <span class="material-icons">add</span>
+                        Add Account
+                    </button>
+                </div>
+
+                <div class="accounts-grid" id="accountsGrid">
+                </div>
+            </section>
+
+            <!-- Income Section -->
+            <section id="income" class="content-section">
+                <div class="section-header">
+                    <h2>Income Tracker</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" id="addIncomeBtn">
+                            <span class="material-icons">add</span>
+                            Add Income
+                        </button>
+                        <button class="btn btn-secondary" id="addIncomeSourceBtn">
+                            <span class="material-icons">person_add</span>
+                            Add Source
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Income Sources -->
+                <div class="income-sources">
+                    <h3>Income Sources</h3>
+                    <div class="sources-grid" id="sourcesGrid">
+                    </div>
+                </div>
+
+                <!-- Income Table -->
+                <div class="income-table">
+                    <h3>Income History</h3>
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label>Source:</label>
+                            <select id="incomeSourceFilter">
+                                <option value="">All Sources</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Type:</label>
+                            <select id="incomeTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="recurring">Recurring</option>
+                                <option value="one-time">One-Time</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Date Range:</label>
+                            <input type="date" id="incomeStartDate">
+                            <input type="date" id="incomeEndDate">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Source</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomeTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Goals Section -->
+            <section id="goals" class="content-section">
+                <div class="section-header">
+                    <h2>Savings Goals</h2>
+                    <button class="btn btn-primary" id="addGoalBtn">
+                        <span class="material-icons">add</span>
+                        Add Goal
+                    </button>
+                </div>
+
+                <div class="goals-grid" id="goalsGrid">
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="section-header">
+                    <h2>Reports & Analytics</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" id="exportBtn">
+                            <span class="material-icons">download</span>
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-chart">
+                        <h3>Monthly Trends</h3>
+                        <div class="chart" id="trendsChart"></div>
+                    </div>
+                    <div class="report-chart">
+                        <h3>Category Breakdown</h3>
+                        <div class="chart" id="breakdownChart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                </div>
+
+                <div class="settings-container">
+                    <!-- Profile Section -->
+                    <div class="settings-card">
+                        <h3>Profile</h3>
+                        <div class="profile-section">
+                            <div class="profile-avatar">
+                                <span class="material-icons" id="profileAvatarIcon">account_circle</span>
+                            </div>
+                            <div class="profile-info">
+                                <h4 id="profileName">Loading...</h4>
+                                <p id="profileEmail">Loading...</p>
+                                <p id="profileHousehold" class="household-name">Loading...</p>
+                            </div>
+                            <button class="btn btn-primary" id="editProfileBtn">
+                                <span class="material-icons">edit</span>
+                                Edit Profile
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Section -->
+                    <div class="settings-card">
+                        <h3>Appearance</h3>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">dark_mode</span>
+                                <div>
+                                    <strong>Dark Mode</strong>
+                                    <p>Switch between light and dark themes</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Customization -->
+                    <div class="settings-card">
+                        <h3>Dashboard Customization</h3>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">dashboard</span>
+                                <div>
+                                    <strong>Customize Dashboard</strong>
+                                    <p>Drag and drop widgets, show/hide sections</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="app.showDashboardCustomization()">
+                                <span class="material-icons">edit</span>
+                                Customize
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">view_module</span>
+                                <div>
+                                    <strong>Saved Layouts</strong>
+                                    <p id="savedLayoutsCount">0 layouts saved</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="app.showLayoutManager()">
+                                <span class="material-icons">folder</span>
+                                Manage
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Accessibility -->
+                    <div class="settings-card">
+                        <h3>Accessibility</h3>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">contrast</span>
+                                <div>
+                                    <strong>High Contrast Mode</strong>
+                                    <p>Enhanced visibility for better readability</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="highContrastToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">text_fields</span>
+                                <div>
+                                    <strong>Font Size</strong>
+                                    <p>Adjust text size for better readability</p>
+                                </div>
+                            </div>
+                            <select id="fontSizeSelect" style="padding: 8px;">
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                                <option value="xlarge">Extra Large</option>
+                            </select>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">hearing</span>
+                                <div>
+                                    <strong>Screen Reader Support</strong>
+                                    <p>Enhanced ARIA labels and navigation</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="screenReaderToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">keyboard</span>
+                                <div>
+                                    <strong>Keyboard Navigation</strong>
+                                    <p>Navigate using keyboard shortcuts</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="keyboardNavToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">reduce_motion</span>
+                                <div>
+                                    <strong>Reduce Motion</strong>
+                                    <p>Minimize animations and transitions</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="reduceMotionToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Onboarding -->
+                    <div class="settings-card">
+                        <h3>Help & Tutorials</h3>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" onclick="app.onboardingManager.startTour()" style="width: 100%; margin-bottom: 8px;">
+                                <span class="material-icons">tour</span>
+                                Take App Tour
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" onclick="app.onboardingManager.startQuickStartWizard()" style="width: 100%; margin-bottom: 8px;">
+                                <span class="material-icons">play_arrow</span>
+                                Quick Start Wizard
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feature Quick Access -->
+                    <div class="settings-card">
+                        <h3>Quick Features</h3>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" onclick="app.showModal('recurringTransactionModal')" style="width: 100%; margin-bottom: 8px;">
+                                <span class="material-icons">repeat</span>
+                                Recurring Transactions
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" onclick="app.showModal('templateModal')" style="width: 100%; margin-bottom: 8px;">
+                                <span class="material-icons">bookmark</span>
+                                Transaction Templates
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" onclick="app.showModal('debtModal')" style="width: 100%; margin-bottom: 8px;">
+                                <span class="material-icons">account_balance_wallet</span>
+                                Debt Tracker
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" onclick="app.showModal('calendarModal')" style="width: 100%; margin-bottom: 8px;">
+                                <span class="material-icons">calendar_today</span>
+                                Financial Calendar
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" onclick="app.showModal('forecastModal')" style="width: 100%; margin-bottom: 8px;">
+                                <span class="material-icons">trending_up</span>
+                                Cash Flow Forecast
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Account Section -->
+                    <div class="settings-card">
+                        <h3>Account</h3>
+                        <div class="settings-item">
+                            <button class="btn btn-secondary" id="logoutBtn" style="width: 100%;">
+                                <span class="material-icons">logout</span>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Offline & Data Management Section -->
+                    <div class="settings-card">
+                        <h3>Offline & Data Management</h3>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">cloud_download</span>
+                                <div>
+                                    <strong>Export Data</strong>
+                                    <p>Download all your data as JSON backup</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" id="exportDataBtn">
+                                <span class="material-icons">download</span>
+                                Export
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">cloud_upload</span>
+                                <div>
+                                    <strong>Import Data</strong>
+                                    <p>Restore data from JSON backup file</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" id="importDataBtn">
+                                <span class="material-icons">upload</span>
+                                Import
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">storage</span>
+                                <div>
+                                    <strong>Storage Statistics</strong>
+                                    <p id="storageStats">Loading...</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" id="refreshStatsBtn">
+                                <span class="material-icons">refresh</span>
+                                Refresh
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons" style="color: #f44336;">delete_sweep</span>
+                                <div>
+                                    <strong>Delete All Demo Data</strong>
+                                    <p>Remove all sample data and start fresh</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger" id="deleteDemoDataBtn">
+                                <span class="material-icons">delete_forever</span>
+                                Clear Demo Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Security & Lockscreen Section -->
+                    <div class="settings-card">
+                        <h3>Security & Lockscreen</h3>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">lock</span>
+                                <div>
+                                    <strong>App Lockscreen</strong>
+                                    <p>Enable Windows-style lockscreen with passcode</p>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="lockscreenToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item" id="passcodeSettings" style="display: none;">
+                            <div class="settings-item-content">
+                                <span class="material-icons">password</span>
+                                <div>
+                                    <strong>Passcode</strong>
+                                    <p id="passcodeStatus">No passcode set</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" id="setPasscodeBtn">
+                                <span class="material-icons">key</span>
+                                Set Passcode
+                            </button>
+                        </div>
+                        <div class="settings-item" id="autoLockSettings" style="display: none;">
+                            <div class="settings-item-content">
+                                <span class="material-icons">timer</span>
+                                <div>
+                                    <strong>Auto-Lock</strong>
+                                    <p>Automatically lock after inactivity</p>
+                                </div>
+                            </div>
+                            <select id="autoLockTime" class="form-select" style="width: 120px;">
+                                <option value="0">Never</option>
+                                <option value="30">30 seconds</option>
+                                <option value="60">1 minute</option>
+                                <option value="300">5 minutes</option>
+                                <option value="600">10 minutes</option>
+                                <option value="1800">30 minutes</option>
+                            </select>
+                        </div>
+                        <div class="settings-item" id="lockscreenPreview" style="display: none;">
+                            <div class="settings-item-content">
+                                <span class="material-icons">preview</span>
+                                <div>
+                                    <strong>Test Lockscreen</strong>
+                                    <p>Preview the lockscreen interface</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" id="testLockscreenBtn">
+                                <span class="material-icons">visibility</span>
+                                Test
+                            </button>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-content">
+                                <span class="material-icons">sync</span>
+                                <div>
+                                    <strong>Sync Status</strong>
+                                    <p id="syncStatus">Ready to sync</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" id="manualSyncBtn">
+                                <span class="material-icons">sync</span>
+                                Sync Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div id="modalOverlayBackdrop" class="modal-overlay-backdrop" aria-hidden="true"></div>
+        <div class="modal modal-overlay-content" id="transactionModal">
+            <div class="modal-header">
+                <h3>Add Transaction</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="transactionForm">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="transactionDescription" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="transactionAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="transactionCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health & Fitness">Health & Fitness</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Education">Education</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Income">Income</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Account</label>
+                        <select id="transactionAccount" required>
+                            <option value="">Select Account</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelTransaction">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal modal-overlay-content" id="accountModal">
+            <div class="modal-header">
+                <h3>Add Account</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm">
+                    <div class="form-group">
+                        <label>Account Name</label>
+                        <input type="text" id="accountName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Type</label>
+                        <select id="accountType" required>
+                            <option value="">Select Type</option>
+                            <option value="checking">Checking</option>
+                            <option value="savings">Savings</option>
+                            <option value="credit">Credit Card</option>
+                            <option value="investment">Investment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Initial Balance</label>
+                        <input type="number" id="accountBalance" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="color" id="accountColor" value="#1976d2">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelAccount">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal modal-overlay-content" id="goalModal">
+            <div class="modal-header">
+                <h3>Add Savings Goal</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="goalForm">
+                    <div class="form-group">
+                        <label>Goal Name</label>
+                        <input type="text" id="goalName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Amount</label>
+                        <input type="number" id="goalTarget" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Amount</label>
+                        <input type="number" id="goalCurrent" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Target Date</label>
+                        <input type="date" id="goalDeadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="goalPriority" required>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelGoal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Goal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal modal-overlay-content" id="incomeModal">
+            <div class="modal-header">
+                <h3>Add Income</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="incomeForm">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="incomeDescription" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="incomeAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Source</label>
+                        <select id="incomeSource" required>
+                            <option value="">Select Source</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Income Type</label>
+                        <select id="incomeType" required>
+                            <option value="recurring">Recurring</option>
+                            <option value="one-time">One-Time</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="recurringFields" style="display: none;">
+                        <label>Frequency</label>
+                        <select id="incomeFrequency">
+                            <option value="weekly">Weekly</option>
+                            <option value="bi-weekly">Bi-Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="incomeDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account</label>
+                        <select id="incomeAccount" required>
+                            <option value="">Select Account</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelIncome">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Income</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal modal-overlay-content" id="incomeSourceModal">
+            <div class="modal-header">
+                <h3>Add Income Source</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="incomeSourceForm">
+                    <div class="form-group">
+                        <label>Source Name</label>
+                        <input type="text" id="sourceName" required placeholder="e.g., John's Salary, Freelance Work">
+                    </div>
+                    <div class="form-group">
+                        <label>Source Type</label>
+                        <select id="sourceType" required>
+                            <option value="">Select Type</option>
+                            <option value="salary">Salary</option>
+                            <option value="freelance">Freelance</option>
+                            <option value="investment">Investment</option>
+                            <option value="business">Business</option>
+                            <option value="rental">Rental Income</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Monthly Amount</label>
+                        <input type="number" id="expectedAmount" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="color" id="sourceColor" value="#4caf50">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelIncomeSource">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Source</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recurring Transaction Modal -->
+    <div id="recurringTransactionModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Create Recurring Transaction</h3>
+                <button class="modal-close" onclick="app.hideModal('recurringTransactionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="recurringTransactionForm">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="recurringDescription" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="recurringAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="recurringCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health & Fitness">Health & Fitness</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Education">Education</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Income">Income</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Account</label>
+                        <select id="recurringAccount" required>
+                            <option value="">Select Account</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Frequency</label>
+                        <select id="recurringFrequency" required>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="recurringStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date (Optional)</label>
+                        <input type="date" id="recurringEndDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="recurringNotes" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="app.hideModal('recurringTransactionModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Recurring Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Template Modal -->
+    <div id="templateModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Transaction Templates</h3>
+                <button class="modal-close" onclick="app.hideModal('templateModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="templatesList" style="margin-bottom: 20px;">
+                    <h4>Saved Templates</h4>
+                    <div id="templatesContainer" style="display: grid; gap: 12px; margin-bottom: 20px;"></div>
+                </div>
+                <form id="templateForm">
+                    <h4>Create New Template</h4>
+                    <div class="form-group">
+                        <label>Template Name</label>
+                        <input type="text" id="templateName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="templateDescription" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="templateAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="templateCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health & Fitness">Health & Fitness</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Education">Education</option>
+                            <option value="Travel">Travel</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="app.hideModal('templateModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Template</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Split Transaction Modal -->
+    <div id="splitTransactionModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>Split Transaction</h3>
+                <button class="modal-close" onclick="app.hideModal('splitTransactionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="splitTransactionInfo" style="margin-bottom: 20px; padding: 12px; background: #f5f5f5; border-radius: 8px;">
+                    <p><strong>Original Transaction:</strong> <span id="splitOriginalDesc"></span></p>
+                    <p><strong>Total Amount:</strong> <span id="splitOriginalAmount"></span></p>
+                </div>
+                <div id="splitMethod" style="margin-bottom: 20px;">
+                    <label>Split Method:</label>
+                    <select id="splitMethodSelect" style="width: 100%; padding: 8px; margin-top: 8px;">
+                        <option value="equal">Split Equally</option>
+                        <option value="percentage">Split by Percentage</option>
+                        <option value="custom">Custom Amounts</option>
+                    </select>
+                </div>
+                <div id="splitSplitsContainer" style="margin-bottom: 20px;"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="app.addSplitRow()">Add Split</button>
+                    <button type="button" class="btn btn-secondary" onclick="app.hideModal('splitTransactionModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="app.applySplit()">Apply Split</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debt Tracking Modal -->
+    <div id="debtModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>Debt Management</h3>
+                <button class="modal-close" onclick="app.hideModal('debtModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="debtsList" style="margin-bottom: 20px;">
+                    <h4>Your Debts</h4>
+                    <div id="debtsContainer" style="display: grid; gap: 12px; margin-bottom: 20px;"></div>
+                    <div id="debtSummary" style="padding: 16px; background: #f5f5f5; border-radius: 8px; margin-bottom: 20px;">
+                        <h4>Debt Summary</h4>
+                        <p><strong>Total Debt:</strong> <span id="totalDebtAmount"></span></p>
+                        <p><strong>Monthly Minimum Payments:</strong> <span id="totalMinPayments"></span></p>
+                        <p><strong>Debt-Free Date:</strong> <span id="debtFreeDate"></span></p>
+                    </div>
+                </div>
+                <form id="debtForm">
+                    <h4>Add New Debt</h4>
+                    <div class="form-group">
+                        <label>Debt Name</label>
+                        <input type="text" id="debtName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Debt Type</label>
+                        <select id="debtType" required>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="loan">Loan</option>
+                            <option value="mortgage">Mortgage</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Principal Amount</label>
+                        <input type="number" id="debtPrincipal" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Balance</label>
+                        <input type="number" id="debtBalance" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Interest Rate (%)</label>
+                        <input type="number" id="debtInterestRate" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Payment</label>
+                        <input type="number" id="debtMinPayment" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date (Optional)</label>
+                        <input type="date" id="debtDueDate">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="app.hideModal('debtModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Debt</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Calendar Modal -->
+    <div id="calendarModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>Financial Calendar</h3>
+                <button class="modal-close" onclick="app.hideModal('calendarModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="app.changeCalendarMonth(-1)">
+                        <span class="material-icons">chevron_left</span>
+                    </button>
+                    <h3 id="calendarMonthYear"></h3>
+                    <button class="btn btn-secondary" onclick="app.changeCalendarMonth(1)">
+                        <span class="material-icons">chevron_right</span>
+                    </button>
+                </div>
+                <div id="calendarGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash Flow Forecast Modal -->
+    <div id="forecastModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>Cash Flow Forecast</h3>
+                <button class="modal-close" onclick="app.hideModal('forecastModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 20px;">
+                    <label>Forecast Period:</label>
+                    <select id="forecastDays" style="padding: 8px; margin-left: 8px;">
+                        <option value="30">30 Days</option>
+                        <option value="60">60 Days</option>
+                        <option value="90">90 Days</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="app.updateForecast()" style="margin-left: 12px;">Update</button>
+                </div>
+                <div id="forecastSummary" style="padding: 16px; background: #f5f5f5; border-radius: 8px; margin-bottom: 20px;">
+                    <h4>Forecast Summary</h4>
+                    <p><strong>Current Balance:</strong> <span id="forecastCurrentBalance"></span></p>
+                    <p><strong>Projected Balance:</strong> <span id="forecastProjectedBalance"></span></p>
+                    <p><strong>Low Balance Warnings:</strong> <span id="forecastWarnings"></span></p>
+                </div>
+                <div id="forecastChart" style="height: 300px; margin-bottom: 20px;"></div>
+                <div id="forecastTable" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Customization Modal -->
+    <div id="dashboardCustomizationModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Customize Dashboard</h3>
+                <button class="modal-close" onclick="app.hideModal('dashboardCustomizationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px;">Drag widgets to reorder, or toggle visibility. Changes are saved automatically.</p>
+                <div id="widgetCustomizationList" style="display: grid; gap: 12px;"></div>
+                <div style="margin-top: 24px; display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="app.dashboardCustomization.resetToDefault()">Reset to Default</button>
+                    <button class="btn btn-primary" onclick="app.saveDashboardLayout()">Save Layout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout Manager Modal -->
+    <div id="layoutManagerModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>Manage Layouts</h3>
+                <button class="modal-close" onclick="app.hideModal('layoutManagerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="layoutsList" style="display: grid; gap: 12px; margin-bottom: 20px;"></div>
+                <button class="btn btn-primary" onclick="app.saveCurrentLayoutAs()">Save Current Layout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Settings Modal -->
+    <div id="enhancedSettingsModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>Advanced Settings</h3>
+                <button class="modal-close" onclick="app.hideModal('enhancedSettingsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <button class="settings-tab active" onclick="app.showSettingsTab('notifications')">Notifications</button>
+                    <button class="settings-tab" onclick="app.showSettingsTab('backup')">Backup</button>
+                    <button class="settings-tab" onclick="app.showSettingsTab('encryption')">Encryption</button>
+                    <button class="settings-tab" onclick="app.showSettingsTab('currency')">Currency</button>
+                </div>
+
+                <div id="notificationsSettings" class="settings-tab-content active">
+                    <h4>Notification Preferences</h4>
+                    <div class="settings-item">
+                        <label class="switch">
+                            <input type="checkbox" id="notifBudgetAlerts" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Budget Exceeded Alerts</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="switch">
+                            <input type="checkbox" id="notifBillReminders" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Bill Reminders</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="switch">
+                            <input type="checkbox" id="notifLowBalance" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Low Balance Warnings</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="switch">
+                            <input type="checkbox" id="notifGoalMilestones" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Goal Milestones</span>
+                    </div>
+                </div>
+
+                <div id="backupSettings" class="settings-tab-content">
+                    <h4>Backup Settings</h4>
+                    <div class="form-group">
+                        <label>Enable Scheduled Backups</label>
+                        <label class="switch">
+                            <input type="checkbox" id="backupEnabled">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Backup Frequency</label>
+                        <select id="backupFrequency">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Backup Time</label>
+                        <input type="time" id="backupTime" value="02:00">
+                    </div>
+                    <div class="form-group">
+                        <label>Keep Last N Backups</label>
+                        <input type="number" id="backupKeep" value="30" min="1" max="100">
+                    </div>
+                    <button class="btn btn-primary" onclick="app.saveBackupSettings()">Save Backup Settings</button>
+                    <button class="btn btn-secondary" onclick="app.createBackupNow()" style="margin-left: 12px;">Create Backup Now</button>
+                </div>
+
+                <div id="encryptionSettings" class="settings-tab-content">
+                    <h4>Data Encryption</h4>
+                    <p>Encryption protects sensitive transaction data. All data is encrypted at rest.</p>
+                    <div class="settings-item">
+                        <span>Encryption Status: <strong id="encryptionStatus">Enabled</strong></span>
+                    </div>
+                    <button class="btn btn-secondary" onclick="app.regenerateEncryptionKey()">Regenerate Encryption Key</button>
+                    <p style="font-size: 12px; color: #666; margin-top: 12px;">Warning: Regenerating the key will require re-encryption of all data.</p>
+                </div>
+
+                <div id="currencySettings" class="settings-tab-content">
+                    <h4>Currency Conversion</h4>
+                    <div class="form-group">
+                        <label>Base Currency</label>
+                        <select id="baseCurrency">
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                            <option value="JPY">JPY - Japanese Yen</option>
+                            <option value="CAD">CAD - Canadian Dollar</option>
+                            <option value="AUD">AUD - Australian Dollar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Exchange Rates Last Updated</label>
+                        <p id="exchangeRateUpdate"></p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="app.updateExchangeRates()">Update Exchange Rates</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="modal-close" id="closeProfileModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <!-- Profile Photo Section -->
+                    <div class="form-group" style="text-align: center; margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 12px; font-weight: 500;">Profile Photo</label>
+                        <div class="profile-photo-upload">
+                            <div class="profile-photo-preview" id="profilePhotoPreview">
+                                <span class="material-icons" id="photoPreviewIcon">account_circle</span>
+                                <div class="photo-overlay">
+                                    <span class="material-icons">camera_alt</span>
+                                    <span>Change Photo</span>
+                                </div>
+                            </div>
+                            <input 
+                                type="file" 
+                                id="profilePhotoInput" 
+                                accept="image/*"
+                                style="display: none;"
+                            />
+                            <button 
+                                type="button" 
+                                class="btn btn-secondary" 
+                                id="selectPhotoBtn"
+                                style="margin-top: 12px;"
+                            >
+                                <span class="material-icons">photo_camera</span>
+                                Choose Photo
+                            </button>
+                            <button 
+                                type="button" 
+                                class="btn btn-secondary" 
+                                id="removePhotoBtn"
+                                style="margin-top: 8px; display: none;"
+                            >
+                                <span class="material-icons">delete</span>
+                                Remove Photo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="editProfileName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="editProfileEmail" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelProfileEdit">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Windows-Style Lockscreen -->
+    <div id="lockscreenOverlay" class="lockscreen-overlay" style="display: none;">
+        <div class="lockscreen-container">
+            <div class="lockscreen-background">
+                <div class="lockscreen-time" id="lockscreenTime">12:00 PM</div>
+                <div class="lockscreen-date" id="lockscreenDate">Monday, January 1, 2026</div>
+            </div>
+            
+            <div class="lockscreen-login">
+                <div class="lockscreen-avatar">
+                    <span class="material-icons">account_circle</span>
+                </div>
+                <div class="lockscreen-user" id="lockscreenUser">User</div>
+                <div class="lockscreen-message">Enter your passcode to unlock</div>
+                
+                <div class="passcode-input-container">
+                    <div class="passcode-dots">
+                        <span class="passcode-dot" data-index="0"></span>
+                        <span class="passcode-dot" data-index="1"></span>
+                        <span class="passcode-dot" data-index="2"></span>
+                        <span class="passcode-dot" data-index="3"></span>
+                        <span class="passcode-dot" data-index="4"></span>
+                        <span class="passcode-dot" data-index="5"></span>
+                    </div>
+                    <input type="text" id="passcodeInput" maxlength="6" autocomplete="off" style="position: absolute; left: -9999px;">
+                </div>
+                
+                <div class="passcode-keypad">
+                    <button class="passcode-key" data-digit="1">1</button>
+                    <button class="passcode-key" data-digit="2">2</button>
+                    <button class="passcode-key" data-digit="3">3</button>
+                    <button class="passcode-key" data-digit="4">4</button>
+                    <button class="passcode-key" data-digit="5">5</button>
+                    <button class="passcode-key" data-digit="6">6</button>
+                    <button class="passcode-key" data-digit="7">7</button>
+                    <button class="passcode-key" data-digit="8">8</button>
+                    <button class="passcode-key" data-digit="9">9</button>
+                    <button class="passcode-key clear" id="passcodeClear">Clear</button>
+                    <button class="passcode-key" data-digit="0">0</button>
+                    <button class="passcode-key backspace" id="passcodeBackspace">
+                        <span class="material-icons">backspace</span>
+                    </button>
+                </div>
+                
+                <div class="lockscreen-options">
+                    <button class="lockscreen-option" id="emergencyUnlock">
+                        <span class="material-icons">security</span>
+                        Emergency Unlock
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passcode Setup Modal -->
+    <div id="passcodeSetupModal" class="modal-overlay" style="display: none;">
+        <div class="modal modal-overlay-content passcode-modal">
+            <div class="modal-header">
+                <h3>Set Passcode</h3>
+                <button class="modal-close" onclick="hidePasscodeSetup()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="passcode-setup-steps">
+                    <div class="step-indicator">
+                        <span class="step active" id="step1">1</span>
+                        <span class="step" id="step2">2</span>
+                        <span class="step" id="step3">3</span>
+                    </div>
+                    
+                    <div class="step-content" id="step1Content">
+                        <h4>Choose your passcode</h4>
+                        <p>Enter a 6-digit passcode to secure your app</p>
+                        <div class="passcode-input-container">
+                            <div class="passcode-dots">
+                                <span class="passcode-dot setup" data-index="0"></span>
+                                <span class="passcode-dot setup" data-index="1"></span>
+                                <span class="passcode-dot setup" data-index="2"></span>
+                                <span class="passcode-dot setup" data-index="3"></span>
+                                <span class="passcode-dot setup" data-index="4"></span>
+                                <span class="passcode-dot setup" data-index="5"></span>
+                            </div>
+                            <input type="text" id="setupPasscodeInput" maxlength="6" autocomplete="off" style="position: absolute; left: -9999px;">
+                        </div>
+                        <div class="passcode-keypad setup-keypad">
+                            <button class="passcode-key" data-digit="1">1</button>
+                            <button class="passcode-key" data-digit="2">2</button>
+                            <button class="passcode-key" data-digit="3">3</button>
+                            <button class="passcode-key" data-digit="4">4</button>
+                            <button class="passcode-key" data-digit="5">5</button>
+                            <button class="passcode-key" data-digit="6">6</button>
+                            <button class="passcode-key" data-digit="7">7</button>
+                            <button class="passcode-key" data-digit="8">8</button>
+                            <button class="passcode-key" data-digit="9">9</button>
+                            <button class="passcode-key clear" id="setupPasscodeClear">Clear</button>
+                            <button class="passcode-key" data-digit="0">0</button>
+                            <button class="passcode-key backspace" id="setupPasscodeBackspace">
+                                <span class="material-icons">backspace</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="step-content" id="step2Content" style="display: none;">
+                        <h4>Confirm your passcode</h4>
+                        <p>Enter the same passcode again</p>
+                        <div class="passcode-input-container">
+                            <div class="passcode-dots">
+                                <span class="passcode-dot confirm" data-index="0"></span>
+                                <span class="passcode-dot confirm" data-index="1"></span>
+                                <span class="passcode-dot confirm" data-index="2"></span>
+                                <span class="passcode-dot confirm" data-index="3"></span>
+                                <span class="passcode-dot confirm" data-index="4"></span>
+                                <span class="passcode-dot confirm" data-index="5"></span>
+                            </div>
+                            <input type="text" id="confirmPasscodeInput" maxlength="6" autocomplete="off" style="position: absolute; left: -9999px;">
+                        </div>
+                        <div class="passcode-keypad confirm-keypad">
+                            <button class="passcode-key" data-digit="1">1</button>
+                            <button class="passcode-key" data-digit="2">2</button>
+                            <button class="passcode-key" data-digit="3">3</button>
+                            <button class="passcode-key" data-digit="4">4</button>
+                            <button class="passcode-key" data-digit="5">5</button>
+                            <button class="passcode-key" data-digit="6">6</button>
+                            <button class="passcode-key" data-digit="7">7</button>
+                            <button class="passcode-key" data-digit="8">8</button>
+                            <button class="passcode-key" data-digit="9">9</button>
+                            <button class="passcode-key clear" id="confirmPasscodeClear">Clear</button>
+                            <button class="passcode-key" data-digit="0">0</button>
+                            <button class="passcode-key backspace" id="confirmPasscodeBackspace">
+                                <span class="material-icons">backspace</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="step-content" id="step3Content" style="display: none;">
+                        <div class="success-animation">
+                            <span class="material-icons" style="font-size: 64px; color: #4caf50;">check_circle</span>
+                        </div>
+                        <h4>Passcode Set Successfully!</h4>
+                        <p>Your app is now secured with a passcode</p>
+                        <button class="btn btn-primary" onclick="hidePasscodeSetup()">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="offline-storage.js"></script>
+    <script src="features/recurring-transactions.js"></script>
+    <script src="features/transaction-templates.js"></script>
+    <script src="features/split-transactions.js"></script>
+    <script src="features/notifications.js"></script>
+    <script src="features/receipt-manager.js"></script>
+    <script src="features/advanced-filters.js"></script>
+    <script src="features/financial-calendar.js"></script>
+    <script src="features/budget-templates.js"></script>
+    <script src="features/debt-tracker.js"></script>
+    <script src="features/cash-flow-forecast.js"></script>
+    <script src="features/enhanced-analytics.js"></script>
+    <script src="features/export-manager.js"></script>
+    <script src="features/currency-converter.js"></script>
+    <script src="features/quick-actions.js"></script>
+    <script src="features/data-encryption.js"></script>
+    <script src="features/local-backup.js"></script>
+    <script src="features/dashboard-customization.js"></script>
+    <script src="features/onboarding.js"></script>
+    <script src="features/enhanced-visualization.js"></script>
+    <script src="features/accessibility.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Welcome Overlay & Quick Tour Script -->
+    <script>
+        let hasShownTour = false;
+        let welcomeTimeout;
+
+        // Initialize welcome overlay
+        function initializeWelcomeOverlay() {
+            // Check if user has seen the tour before
+            hasShownTour = localStorage.getItem('fambudget_tour_shown') === 'true';
+            
+            // Show loading animation for 2 seconds, then hide overlay
+            welcomeTimeout = setTimeout(() => {
+                hideWelcomeOverlay();
+            }, 2000);
+        }
+
+        // Show quick tour modal
+        window.showQuickTour = function() {
+            clearTimeout(welcomeTimeout);
+            document.getElementById('quickTourModal').style.display = 'flex';
+        }
+
+        // Skip tour
+        window.skipTour = function() {
+            document.getElementById('quickTourModal').style.display = 'none';
+            localStorage.setItem('fambudget_tour_shown', 'true');
+            hideWelcomeOverlay();
+        }
+
+        // Start app after tour
+        window.startApp = function() {
+            document.getElementById('quickTourModal').style.display = 'none';
+            localStorage.setItem('fambudget_tour_shown', 'true');
+            hideWelcomeOverlay();
+        }
+
+        // Delete all dummy data
+        window.deleteAllDummyData = function() {
+            if (confirm('⚠️ Are you sure you want to delete all sample data? This action cannot be undone.\n\nThis will remove:\n• All sample accounts\n• All sample transactions\n• All sample goals\n• All sample income entries\n• All sample categories')) {
+                try {
+                    // Clear all localStorage data
+                    localStorage.removeItem('fambudget_accounts');
+                    localStorage.removeItem('fambudget_transactions');
+                    localStorage.removeItem('fambudget_goals');
+                    localStorage.removeItem('fambudget_income');
+                    localStorage.removeItem('fambudget_categories');
+                    localStorage.removeItem('fambudget_user');
+                    localStorage.removeItem('fambudget_household');
+                    localStorage.removeItem('fambudget_settings');
+                    
+                    // Show success message
+                    showNotification('success', '🧹 All sample data cleared successfully! Starting fresh...');
+                    
+                    // Close tour after a short delay
+                    setTimeout(() => {
+                        startApp();
+                    }, 2000);
+                } catch (error) {
+                    showNotification('error', '❌ Failed to clear data. Please try again.');
+                    console.error('Error clearing dummy data:', error);
+                }
+            }
+        }
+
+        // Keep dummy data
+        window.keepDummyData = function() {
+            // No notification - just close the tour and start app
+            startApp();
+        }
+
+        // Show notification helper
+        function showNotification(type, message) {
+            // This function will be available once app.js loads
+            if (typeof window.showNotification === 'function') {
+                window.showNotification(type, message);
+            } else {
+                // Fallback: create a simple notification
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <span class="material-icons">${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}</span>
+                        <div class="notification-text">
+                            <strong>${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Info'}</strong>
+                            <p>${message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Add to page
+                document.body.appendChild(notification);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        }
+
+        // Hide welcome overlay and show main app
+        function hideWelcomeOverlay() {
+            const overlay = document.getElementById('welcomeOverlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+                
+                // Remove overlay completely after transition
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    overlay.remove(); // Completely remove from DOM
+                }, 500);
+            }
+            console.log('Welcome overlay hidden, app should be visible now');
+        }
+
+        // ============================================
+        // UNIFIED INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing app...');
+            
+            // Initialize welcome overlay first
+            setTimeout(initializeWelcomeOverlay, 100);
+            
+            // Initialize delete demo data button
+            const deleteDemoDataBtn = document.getElementById('deleteDemoDataBtn');
+            if (deleteDemoDataBtn) {
+                deleteDemoDataBtn.addEventListener('click', function() {
+                    if (confirm('⚠️ Are you sure you want to delete all demo data? This action cannot be undone.\n\nThis will remove:\n• All sample accounts\n• All sample transactions\n• All sample goals\n• All sample income entries\n• All sample categories')) {
+                        try {
+                            // Clear all localStorage data
+                            localStorage.removeItem('fambudget_accounts');
+                            localStorage.removeItem('fambudget_transactions');
+                            localStorage.removeItem('fambudget_goals');
+                            localStorage.removeItem('fambudget_income');
+                            localStorage.removeItem('fambudget_income_sources');
+                            localStorage.removeItem('fambudget_categories');
+                            localStorage.removeItem('fambudget_user');
+                            localStorage.removeItem('fambudget_household');
+                            localStorage.removeItem('fambudget_settings');
+                            localStorage.removeItem('fambudget_profile_photo');
+                            localStorage.removeItem('fambudget_tour_shown');
+                            
+                            // Set flag to prevent demo data regeneration
+                            localStorage.setItem('fambudget_data_cleared', 'true');
+                            
+                            // Show success message
+                            showNotification('success', '🧹 All demo data cleared successfully! Starting fresh...');
+                            
+                            // Reload the page after a short delay
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } catch (error) {
+                            showNotification('error', '❌ Failed to clear data. Please try again.');
+                            console.error('Error clearing demo data:', error);
+                        }
+                    }
+                });
+            }
+
+            // ============================================
+            // LOCKSCREEN FUNCTIONALITY
+            // ============================================
+            
+            const lockscreenToggle = document.getElementById('lockscreenToggle');
+            const passcodeSettings = document.getElementById('passcodeSettings');
+            const autoLockSettings = document.getElementById('autoLockSettings');
+            const lockscreenPreview = document.getElementById('lockscreenPreview');
+            const setPasscodeBtn = document.getElementById('setPasscodeBtn');
+            const testLockscreenBtn = document.getElementById('testLockscreenBtn');
+            
+            // Load lockscreen settings
+            const lockscreenEnabled = localStorage.getItem('fambudget_lockscreen_enabled') === 'true';
+            const hasPasscode = localStorage.getItem('fambudget_passcode') !== null;
+            
+            if (lockscreenToggle) {
+                lockscreenToggle.checked = lockscreenEnabled;
+                updateLockscreenUI();
+                
+                lockscreenToggle.addEventListener('change', function() {
+                    const enabled = this.checked;
+                    localStorage.setItem('fambudget_lockscreen_enabled', enabled);
+                    
+                    if (enabled && !hasPasscode) {
+                        showPasscodeSetup();
+                    } else if (!enabled) {
+                        localStorage.removeItem('fambudget_passcode');
+                        localStorage.removeItem('fambudget_auto_lock_time');
+                    }
+                    
+                    updateLockscreenUI();
+                });
+            }
+            
+            if (setPasscodeBtn) {
+                setPasscodeBtn.addEventListener('click', showPasscodeSetup);
+            }
+            
+            if (testLockscreenBtn) {
+                testLockscreenBtn.addEventListener('click', showLockscreen);
+            }
+            
+            function updateLockscreenUI() {
+                const enabled = lockscreenToggle.checked;
+                const hasPasscode = localStorage.getItem('fambudget_passcode') !== null;
+                
+                if (passcodeSettings) {
+                    passcodeSettings.style.display = enabled ? 'flex' : 'none';
+                }
+                if (autoLockSettings) {
+                    autoLockSettings.style.display = enabled && hasPasscode ? 'flex' : 'none';
+                }
+                if (lockscreenPreview) {
+                    lockscreenPreview.style.display = enabled && hasPasscode ? 'flex' : 'none';
+                }
+                
+                // Update passcode status
+                const passcodeStatus = document.getElementById('passcodeStatus');
+                if (passcodeStatus) {
+                    passcodeStatus.textContent = hasPasscode ? 'Passcode set' : 'No passcode set';
+                }
+                
+                // Load auto-lock time
+                const autoLockTime = localStorage.getItem('fambudget_auto_lock_time') || '0';
+                const autoLockSelect = document.getElementById('autoLockTime');
+                if (autoLockSelect) {
+                    autoLockSelect.value = autoLockTime;
+                    autoLockSelect.addEventListener('change', function() {
+                        localStorage.setItem('fambudget_auto_lock_time', this.value);
+                    });
+                }
+            }
+            
+            // Initialize passcode input handlers
+            initializePasscodeInput('passcodeInput', 'passcode-dot');
+            initializePasscodeInput('setupPasscodeInput', 'passcode-dot setup');
+            initializePasscodeInput('confirmPasscodeInput', 'passcode-dot confirm');
+            
+            // Initialize keypad handlers
+            initializeKeypad('passcode-keypad', 'passcodeInput');
+            initializeKeypad('setup-keypad', 'setupPasscodeInput');
+            initializeKeypad('confirm-keypad', 'confirmPasscodeInput');
+            
+            // Update lockscreen time
+            updateLockscreenTime();
+            setInterval(updateLockscreenTime, 1000);
+            
+            // Emergency unlock
+            const emergencyUnlock = document.getElementById('emergencyUnlock');
+            if (emergencyUnlock) {
+                emergencyUnlock.addEventListener('click', function() {
+                    if (confirm('Emergency unlock will disable the lockscreen. Continue?')) {
+                        localStorage.setItem('fambudget_lockscreen_enabled', 'false');
+                        hideLockscreen();
+                        showNotification('info', '🔓 Lockscreen disabled via emergency unlock');
+                    }
+                });
+            }
+            
+            console.log('App initialization complete');
+        });
+
+        // Handle escape key to close tour
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('quickTourModal');
+                if (modal && modal.style.display === 'flex') {
+                    skipTour();
+                }
+            }
+        });
+        
+        // ============================================
+        // PASSCODE FUNCTIONS
+        // ============================================
+        
+        function showPasscodeSetup() {
+            const modal = document.getElementById('passcodeSetupModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                resetPasscodeSetup();
+            }
+        }
+        
+        function hidePasscodeSetup() {
+            const modal = document.getElementById('passcodeSetupModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        function resetPasscodeSetup() {
+            // Reset to step 1
+            showSetupStep(1);
+            clearPasscodeInput('setupPasscodeInput');
+            clearPasscodeInput('confirmPasscodeInput');
+            window.tempPasscode = '';
+        }
+        
+        function showSetupStep(step) {
+            // Hide all steps
+            for (let i = 1; i <= 3; i++) {
+                const stepContent = document.getElementById(`step${i}Content`);
+                const stepIndicator = document.getElementById(`step${i}`);
+                if (stepContent) stepContent.style.display = 'none';
+                if (stepIndicator) {
+                    stepIndicator.classList.remove('active', 'completed');
+                    if (i < step) stepIndicator.classList.add('completed');
+                    else if (i === step) stepIndicator.classList.add('active');
+                }
+            }
+            
+            // Show current step
+            const currentStep = document.getElementById(`step${step}Content`);
+            if (currentStep) currentStep.style.display = 'block';
+        }
+        
+        function initializePasscodeInput(inputId, dotClass) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            
+            input.addEventListener('input', function() {
+                updatePasscodeDots(this.value, dotClass);
+                
+                if (inputId === 'setupPasscodeInput' && this.value.length === 6) {
+                    window.tempPasscode = this.value;
+                    setTimeout(() => {
+                        showSetupStep(2);
+                        clearPasscodeInput('confirmPasscodeInput');
+                    }, 300);
+                } else if (inputId === 'confirmPasscodeInput' && this.value.length === 6) {
+                    if (this.value === window.tempPasscode) {
+                        localStorage.setItem('fambudget_passcode', this.value);
+                        setTimeout(() => {
+                            showSetupStep(3);
+                            setTimeout(() => {
+                                hidePasscodeSetup();
+                                showNotification('success', '🔐 Passcode set successfully!');
+                                updateLockscreenUI();
+                            }, 2000);
+                        }, 500);
+                    } else {
+                        showNotification('error', '❌ Passcodes do not match. Please try again.');
+                        clearPasscodeInput('confirmPasscodeInput');
+                    }
+                } else if (inputId === 'passcodeInput' && this.value.length === 6) {
+                    verifyPasscode(this.value);
+                }
+            });
+        }
+        
+        function initializeKeypad(keypadClass, inputId) {
+            const keypad = document.querySelector(`.${keypadClass}`);
+            const input = document.getElementById(inputId);
+            if (!keypad || !input) return;
+            
+            // Number buttons
+            keypad.querySelectorAll('[data-digit]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const digit = this.dataset.digit;
+                    if (input.value.length < 6) {
+                        input.value += digit;
+                        input.dispatchEvent(new Event('input'));
+                    }
+                });
+            });
+            
+            // Clear button
+            const clearBtn = keypad.querySelector('.clear');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function() {
+                    input.value = '';
+                    input.dispatchEvent(new Event('input'));
+                });
+            }
+            
+            // Backspace button
+            const backspaceBtn = keypad.querySelector('.backspace');
+            if (backspaceBtn) {
+                backspaceBtn.addEventListener('click', function() {
+                    input.value = input.value.slice(0, -1);
+                    input.dispatchEvent(new Event('input'));
+                });
+            }
+        }
+        
+        function updatePasscodeDots(value, dotClass) {
+            const dots = document.querySelectorAll(`.${dotClass}`);
+            dots.forEach((dot, index) => {
+                if (index < value.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
+        }
+        
+        function clearPasscodeInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = '';
+                input.dispatchEvent(new Event('input'));
+            }
+        }
+        
+        function verifyPasscode(passcode) {
+            const storedPasscode = localStorage.getItem('fambudget_passcode');
+            if (passcode === storedPasscode) {
+                hideLockscreen();
+            } else {
+                showNotification('error', '❌ Incorrect passcode');
+                clearPasscodeInput('passcodeInput');
+                
+                // Shake animation
+                const lockscreenLogin = document.querySelector('.lockscreen-login');
+                if (lockscreenLogin) {
+                    lockscreenLogin.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        lockscreenLogin.style.animation = '';
+                    }, 500);
+                }
+            }
+        }
+        
+        function showLockscreen() {
+            const overlay = document.getElementById('lockscreenOverlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                clearPasscodeInput('passcodeInput');
+                updateLockscreenTime();
+            }
+        }
+        
+        function hideLockscreen() {
+            const overlay = document.getElementById('lockscreenOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+        
+        function updateLockscreenTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            const dateStr = now.toLocaleDateString('en-US', { 
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const timeElement = document.getElementById('lockscreenTime');
+            const dateElement = document.getElementById('lockscreenDate');
+            
+            if (timeElement) timeElement.textContent = timeStr;
+            if (dateElement) dateElement.textContent = dateStr;
+        }
+        
+        // Add shake animation (wrapped in IIFE to avoid variable conflicts)
+        (function() {
+            const shakeStyle = document.createElement('style');
+            shakeStyle.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+                    20%, 40%, 60%, 80% { transform: translateX(10px); }
+                }
+            `;
+            document.head.appendChild(shakeStyle);
+        })();
+        
+        // Auto-lock functionality
+        let autoLockTimer;
+        function resetAutoLockTimer() {
+            const autoLockTime = localStorage.getItem('fambudget_auto_lock_time') || '0';
+            const lockscreenEnabled = localStorage.getItem('fambudget_lockscreen_enabled') === 'true';
+            const hasPasscode = localStorage.getItem('fambudget_passcode') !== null;
+            
+            if (lockscreenEnabled && hasPasscode && autoLockTime !== '0') {
+                clearTimeout(autoLockTimer);
+                autoLockTimer = setTimeout(() => {
+                    showLockscreen();
+                }, parseInt(autoLockTime) * 1000);
+            }
+        }
+        
+        // Reset timer on user activity
+        document.addEventListener('mousemove', resetAutoLockTimer);
+        document.addEventListener('keypress', resetAutoLockTimer);
+        document.addEventListener('click', resetAutoLockTimer);
+        document.addEventListener('scroll', resetAutoLockTimer);
+        
+        // Check for lockscreen on page load
+        window.addEventListener('load', function() {
+            const lockscreenEnabled = localStorage.getItem('fambudget_lockscreen_enabled') === 'true';
+            const hasPasscode = localStorage.getItem('fambudget_passcode') !== null;
+            
+            if (lockscreenEnabled && hasPasscode) {
+                setTimeout(() => {
+                    showLockscreen();
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

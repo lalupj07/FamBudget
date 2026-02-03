@@ -6,11 +6,11 @@
 
 ### **Take Control of Your Family's Finances**
 
-[![Version](https://img.shields.io/badge/version-4.0.0-blue.svg?style=for-the-badge)](https://github.com/lalupj07/FamBudget/releases)
+[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg?style=for-the-badge)](https://github.com/lalupj07/FamBudget/releases)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green.svg?style=for-the-badge)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg?style=for-the-badge)](https://www.microsoft.com/store)
-[![Privacy](https://img.shields.io/badge/privacy-Local%20Storage-success.svg?style=for-the-badge)](desktop-app/PRIVACY-POLICY.md)
-[![Status](https://img.shields.io/badge/status-Microsoft%20Store%20Ready-orange.svg?style=for-the-badge)](https://github.com/lalupj07/FamBudget/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg?style=for-the-badge)](https://github.com/lalupj07/FamBudget/releases)
+[![Privacy](https://img.shields.io/badge/privacy-Local%20Storage-success.svg?style=for-the-badge)](LICENSE)
+[![Flutter](https://img.shields.io/badge/Flutter-Windows-02569B?style=for-the-badge&logo=flutter)](https://flutter.dev)
 
 [📥 Download](https://github.com/lalupj07/FamBudget/releases) • [📖 Documentation](#features) • [🐛 Report Bug](https://github.com/lalupj07/FamBudget/issues) • [💡 Request Feature](https://github.com/lalupj07/FamBudget/issues) • [📧 Contact](mailto:genxisinnovation@outlook.com)
 
@@ -20,17 +20,19 @@
 
 ## 🌟 Overview
 
-**FamBudget** is a powerful, privacy-focused desktop application designed to help families manage their finances effectively. Built with modern web technologies and Electron, FamBudget offers an intuitive interface for tracking income, expenses, budgets, and financial goals—all while keeping your data **100% private** and secure on your local device.
+**FamBudget** is a powerful, privacy-focused desktop application designed to help families manage their finances effectively. The **Windows desktop app** is built with **Flutter for Windows** (v5.0.0) and offers an intuitive interface for tracking income, expenses, budgets, and financial goals—all while keeping your data **100% private** and secure on your local device.
 
 ### ✨ Why Choose FamBudget?
 
 - 🔒 **Complete Privacy** - Your financial data never leaves your device
 - 💰 **Multi-Currency** - Support for 10+ currencies worldwide
-- 📊 **Beautiful Analytics** - Stunning charts and detailed reports
-- 🎯 **Goal Tracking** - Set and achieve your savings goals
+- 📊 **Beautiful Analytics** - Stunning charts, spending trends, and detailed reports
+- 🎯 **Goal Tracking** - Set goals with a built-in savings calculator
+- 🔁 **Recurring Transactions** - Schedule and track recurring income and expenses
+- 🌍 **12 Languages** - English, Spanish, French, Hindi, Malayalam, Arabic, Chinese, German, Portuguese, Tamil, Japanese, Telugu, Korean
 - 🌙 **Dark Mode** - Comfortable viewing day or night
 - 🚀 **Offline First** - Works completely without internet
-- ⚡ **Fast & Lightweight** - Quick startup, smooth performance
+- ⚡ **Fast & Lightweight** - Flutter Windows, quick startup, smooth performance
 - 🎨 **Modern UI** - Clean, intuitive Material Design interface
 
 ---
@@ -174,28 +176,43 @@ Supported currencies include:
 
 ## 📦 Installation
 
-### 🪟 Windows Installation
+### 🪟 Windows Installation (Flutter desktop v5.0.0)
 
-#### **Option 1: NSIS Installer** (Recommended)
+#### **Option 1: Portable ZIP** (Recommended)
 ```bash
-1. Download FamBudget-3.5.1-x64.exe from Releases
-2. Run the installer
-3. Follow the installation wizard
-4. Launch from Start Menu
+1. Download FamBudget-Portable-5.0.0.zip from Releases
+2. Extract to any folder
+3. Run fambudget_flutter.exe (no installation needed)
 ```
 
-#### **Option 2: MSI Installer**
+#### **Option 2: MSIX Installer**
 ```bash
-1. Download FamBudget-3.5.1-x64.msi from Releases
+1. Download FamBudget-Setup.msix from Releases
+2. Double-click to install (Windows 10/11)
+3. Launch from Start Menu
+```
+
+#### **Option 3: Setup.exe (Inno Setup)**
+```bash
+1. Download FamBudget-Setup-5.0.0.exe from Releases
+2. Run the installer and follow the wizard
+3. Launch from Start Menu
+```
+
+#### **Option 4: MSI Installer** (if provided)
+```bash
+1. Download FamBudget-Setup-5.0.0.msi from Releases
 2. Double-click to install
 3. Launch from Start Menu
 ```
 
-#### **Option 3: Portable Version**
+**Building from source (Windows):**
 ```bash
-1. Download portable executable
-2. Extract to any folder
-3. Run FamBudget.exe (no installation needed)
+cd fambudget_flutter
+flutter pub get
+flutter build windows --release
+# Or run build_release.ps1 for portable ZIP + MSIX + installers:
+# powershell -ExecutionPolicy Bypass -File .\build_release.ps1
 ```
 
 ### 📋 System Requirements
@@ -356,12 +373,13 @@ To provide families with powerful, privacy-focused financial management tools th
 
 | Category | Technology |
 |----------|-----------|
-| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
-| **Framework** | Electron 27.3.11 |
-| **Charts** | Chart.js 4.5.1 |
-| **Icons** | Material Icons |
-| **Build Tool** | Electron Builder |
-| **Package Manager** | npm |
+| **Desktop (primary)** | Flutter for Windows |
+| **Charts** | fl_chart |
+| **Localization** | flutter_localizations (12 locales) |
+| **Installers** | MSIX, Inno Setup, WiX MSI, Portable ZIP |
+| **Legacy desktop** | Electron (desktop-app/) |
+| **Mobile** | React Native / Expo |
+| **Backend** | NestJS |
 
 </div>
 
@@ -371,15 +389,15 @@ To provide families with powerful, privacy-focused financial management tools th
 
 ```
 FamBudget/
-├── 📁 desktop-app/          # Desktop application
-│   ├── 📄 app.js           # Main application logic
-│   ├── 📄 main.js          # Electron main process
-│   ├── 📄 index.html       # Main UI
-│   ├── 📄 styles.css       # Styling
-│   ├── 📄 api.js           # API service (optional)
-│   └── 📁 assets/          # Images and icons
-├── 📁 mobile/              # Mobile application (React Native)
+├── 📁 fambudget_flutter/   # Flutter Windows desktop app (primary, v5.0.0)
+│   ├── 📄 lib/             # Dart source (screens, services, l10n)
+│   ├── 📄 build_release.ps1 # Build portable ZIP, MSIX, Setup.exe, .msi
+│   ├── 📁 installer/       # Inno Setup & WiX installer scripts
+│   └── 📁 assets/          # App icon and resources
+├── 📁 desktop-app/         # Legacy Electron desktop app
+├── 📁 mobile/              # Mobile app (React Native / Expo)
 ├── 📁 backend/             # Backend API (NestJS)
+├── 📁 screenshots/         # App screenshots for README
 ├── 📄 CHANGELOG.md         # Version history
 └── 📄 LICENSE              # Apache 2.0 License
 ```
@@ -390,16 +408,15 @@ FamBudget/
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
-### 🎉 Current Version: 4.0.0
+### 🎉 Current Version: 5.0.0
 
 **What's New:**
-- ✅ GenXis Innovations branding
-- ✅ Enhanced stability and error handling
-- ✅ Fixed blank screen issues
-- ✅ Microsoft Store ready
-- ✅ Improved null checks throughout
-- ✅ Comprehensive privacy policy
-- ✅ Professional documentation
+- ✅ Flutter Windows desktop app as primary
+- ✅ Category budgets, recurring transactions, quick-add, undo delete
+- ✅ Goal calculator, spending trends, global search, duplicate hints
+- ✅ Scheduled backup, profile photo, 12-language support
+- ✅ Portable ZIP, MSIX, Inno Setup, and WiX MSI installers
+- ✅ Apache 2.0 & GenXis Innovation licensing
 
 ---
 
@@ -451,7 +468,7 @@ This project is licensed under the **Apache License 2.0** - see the [LICENSE](LI
 [![Releases](https://img.shields.io/badge/Releases-Latest-blue?style=flat-square)](https://github.com/lalupj07/FamBudget/releases)
 [![Issues](https://img.shields.io/badge/Issues-Report%20Bug-red?style=flat-square)](https://github.com/lalupj07/FamBudget/issues)
 [![Privacy](https://img.shields.io/badge/Privacy-Policy-green?style=flat-square)](desktop-app/PRIVACY-POLICY.md)
-[![Changelog](https://img.shields.io/badge/Changelog-v4.0.0-orange?style=flat-square)](CHANGELOG.md)
+[![Changelog](https://img.shields.io/badge/Changelog-v5.0.0-orange?style=flat-square)](CHANGELOG.md)
 
 </div>
 

@@ -56,6 +56,7 @@ logs/
 *.bat
 *.ps1
 *.sh
+!fambudget_flutter/build_release.ps1
 
 # Test files
 test-*.html
@@ -80,6 +81,37 @@ test-minimal.html
 
 # OneDrive files
 ~$*
+
+# Wrangler / Cloudflare local state
+.wrangler/
+
+# File hashes / IDE metadata
+$filehashes$.dat
+
+# MSIX packaging tool drivers and certs (not part of app)
+*.cab
+*.cat
+*.mum
+amd64_msix-*
+Msix-PackagingTool-*
+MSIXPackagingtool*.msixbundle
+update.cat
+update.mum
+
+# Loose media and archives (use screenshots/ for repo images)
+compressed.zip
+*.mp4
+App Screenshot/
+New folder/
+Accounts.jpg
+Home Screen.jpg
+Income sources.jpg
+Report And Analytics.jpg
+Saving Goals.jpg
+Transactions.jpg
+logo (1).png
+logo.png
+upload-to-r2.py
 
 # Build artifacts
 *.asar
@@ -150,9 +182,17 @@ releases/
 !LICENSE
 !CONTRIBUTING.md
 !CHANGELOG.md
+!fambudget_flutter/README.md
+!fambudget_flutter/installer/README.md
+!backend/README.md
+!mobile/README.md
+!screenshots/README.md
 
 # Desktop app specific
 desktop-app/dist-*/
+desktop-app/FamBudget-Portable-*/
+desktop-app/FamBudget-*-Portable-*.zip
+desktop-app/FamBudget-*-Source-*.zip
 desktop-app/*.bat
 desktop-app/*.ps1
 desktop-app/*.nsh

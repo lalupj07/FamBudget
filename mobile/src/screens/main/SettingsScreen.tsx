@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import {
   List,
@@ -7,17 +7,27 @@ import {
   Divider,
   Switch,
   Avatar,
+  TextInput,
+  Button,
+  Portal,
+  Dialog,
+  ActivityIndicator,
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme as useAppTheme } from '../../contexts/ThemeContext';
+import { api } from '../../services/api';
 
 const SettingsScreen = () => {
   const theme = useTheme();
-  const { user, household, logout } = useAuth();
+  const { user, household, logout, updateUser } = useAuth();
   const { isDarkMode, toggleTheme } = useAppTheme();
-  const [biometricEnabled, setBiometricEnabled] = React.useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [editingName, setEditingName] = useState(user?.name || '');
+  const [editingEmail, setEditingEmail] = useState(user?.email || '');
+  const [updatingProfile, setUpdatingProfile] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
@@ -51,6 +61,41 @@ const SettingsScreen = () => {
     );
   };
 
+  const handleEditProfile = () => {
+    setEditingName(user?.name || '');
+    setEditingEmail(user?.email || '');
+    setShowEditProfile(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!editingName.trim()) {
+      Alert.alert('Error', 'Name cannot be empty');
+      return;
+    }
+
+    setUpdatingProfile(true);
+    try {
+      const response = await api.patch('/members/profile', {
+        name: editingName.trim(),
+        email: editingEmail.trim(),
+      });
+      
+      if (updateUser) {
+        updateUser(response.data);
+      }
+      
+      setShowEditProfile(false);
+      Alert.alert('Success', 'Profile updated successfully');
+    } catch (error: any) {
+      Alert.alert(
+        'Error',
+        error.response?.data?.message || 'Failed to update profile'
+      );
+    } finally {
+      setUpdatingProfile(false);
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['bottom']}>
       <ScrollView>
@@ -61,9 +106,18 @@ const SettingsScreen = () => {
             label={user?.name?.substring(0, 2).toUpperCase() || 'U'}
             style={{ backgroundColor: theme.colors.primary }}
           />
-          <Text style={styles.userName}>{user?.name}</Text>
+          <Text style={styles.userName}>{user?.name || 'User'}</Text>
           <Text style={styles.userEmail}>{user?.email}</Text>
           <Text style={styles.householdName}>{household?.name}</Text>
+          <Button
+            mode="outlined"
+            onPress={handleEditProfile}
+            style={styles.editButton}
+            icon="pencil"
+            compact
+          >
+            Edit Profile
+          </Button>
         </View>
 
         <Divider />
@@ -245,6 +299,47 @@ const SettingsScreen = () => {
           <Text style={styles.footerText}>Made with ❤️ for families</Text>
         </View>
       </ScrollView>
+
+      {/* Edit Profile Dialog */}
+      <Portal>
+        <Dialog
+          visible={showEditProfile}
+          onDismiss={() => setShowEditProfile(false)}
+          style={{ backgroundColor: theme.colors.surface }}
+        >
+          <Dialog.Title>Edit Profile</Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              label="Name"
+              value={editingName}
+              onChangeText={setEditingName}
+              mode="outlined"
+              style={styles.dialogInput}
+              autoCapitalize="words"
+            />
+            <TextInput
+              label="Email"
+              value={editingEmail}
+              onChangeText={setEditingEmail}
+              mode="outlined"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.dialogInput}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setShowEditProfile(false)}>Cancel</Button>
+            <Button
+              onPress={handleSaveProfile}
+              mode="contained"
+              loading={updatingProfile}
+              disabled={updatingProfile}
+            >
+              Save
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </SafeAreaView>
   );
 };
@@ -271,6 +366,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
     fontWeight: '600',
+  },
+  editButton: {
+    marginTop: 16,
+  },
+  dialogInput: {
+    marginBottom: 12,
   },
   footer: {
     padding: 24,

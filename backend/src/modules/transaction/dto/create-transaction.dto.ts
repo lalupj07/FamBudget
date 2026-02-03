@@ -25,6 +25,10 @@ export class CreateTransactionDto {
   description?: string;
 
   @IsOptional()
+  @IsString()
+  notes?: string;
+
+  @IsOptional()
   @IsArray()
   tags?: string[];
 

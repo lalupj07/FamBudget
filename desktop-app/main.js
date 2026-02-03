@@ -1,38 +1,45 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 
+// Disable GPU acceleration to avoid GPU process errors on Windows
+app.disableHardwareAcceleration();
+app.commandLine.appendSwitch('disable-gpu');
+app.commandLine.appendSwitch('disable-software-rasterizer');
+
 // Keep a global reference of the window object
 let mainWindow;
 let isDev = process.argv.includes('--dev');
 
 // Create the main window
 const createWindow = () => {
-  
   // Create the browser window
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
-    minWidth: 1200,
-    minHeight: 800,
+    minWidth: 1000,
+    minHeight: 700,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      enableRemoteModule: false,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, 'assets/icon.png'),
-    titleBarStyle: 'default',
-    show: false
+    show: false,
+    backgroundColor: '#1976d2'
   });
 
-  // Load the app
+  // Load the main application
   mainWindow.loadFile('index.html');
 
-  // Show window when ready
+  // Show window when content is ready
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+    mainWindow.maximize();
+    mainWindow.focus();
+    mainWindow.setAlwaysOnTop(true);
+    setTimeout(() => {
+      mainWindow.setAlwaysOnTop(false);
+    }, 100);
     
-    // Open DevTools in development
     if (isDev) {
       mainWindow.webContents.openDevTools();
     }
@@ -53,8 +60,6 @@ const createWindow = () => {
 // App event handlers
 app.whenReady().then(() => {
   createWindow();
-  
-  // Create application menu
   createMenu();
   
   app.on('activate', () => {
@@ -210,4 +215,13 @@ ipcMain.handle('show-open-dialog', async (event, options) => {
 ipcMain.handle('show-message-box', async (event, options) => {
   const result = await dialog.showMessageBox(mainWindow, options);
   return result;
+});
+
+// Focus the app window (fixes input/cursor not working in modals after edit in Electron)
+ipcMain.handle('focus-window', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.focus();
+    mainWindow.setAlwaysOnTop(true);
+    mainWindow.setAlwaysOnTop(false);
+  }
 });

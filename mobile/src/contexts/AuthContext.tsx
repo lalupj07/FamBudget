@@ -25,6 +25,7 @@ interface AuthContextData {
   login: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (userData: User) => void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -114,9 +115,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     delete api.defaults.headers.common['Authorization'];
   };
 
+  const updateUser = (userData: User) => {
+    setUser(userData);
+    AsyncStorage.setItem('@FamBudget:user', JSON.stringify(userData));
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, household, token, loading, login, register, logout }}
+      value={{ user, household, token, loading, login, register, logout, updateUser }}
     >
       {children}
     </AuthContext.Provider>

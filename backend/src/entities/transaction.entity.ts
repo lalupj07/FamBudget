@@ -44,6 +44,9 @@ export class Transaction {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ type: 'text', nullable: true })
+  notes: string;
+
   @Column({ type: 'simple-array', nullable: true })
   tags: string[];
 

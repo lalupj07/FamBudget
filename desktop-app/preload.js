@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options),
   showOpenDialog: (options) => ipcRenderer.invoke('show-open-dialog', options),
   showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
+  focusWindow: () => ipcRenderer.invoke('focus-window'),
   
   // Menu events
   onMenuNewTransaction: (callback) => ipcRenderer.on('menu-new-transaction', callback),
