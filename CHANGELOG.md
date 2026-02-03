@@ -2,6 +2,24 @@
 
 All notable changes to FamBudget will be documented in this file.
 
+## [5.0.1] - 2026-02-04
+
+### Added
+- **Screenshots (v5.0.0 UI):** New app screenshots in `screenshots/` for documentation and releases:
+  - **Dashboard** – Summary cards (income, expenses, net change, savings rate), Income vs Expenses chart, Upcoming recurring, Spending by category, Recent transactions, Quick add FAB.
+  - **Transactions** – Recurring section (Add recurring, Rent, Netflix), filters (search, account, category, date range), Import/Add transaction, transaction list with edit/delete.
+  - **Accounts** – Primary Checking, Savings, Cash cards with balances and Edit/Delete; Add Account; Quick add FAB.
+  - **Income** – Income sources (Add source, Main job, Side gig), Income entries (Add income, recurring/one-time entries with dates and amounts).
+  - **Goals** – Goal calculator (target amount, current saved, target date), goal cards (Emergency Fund, Vacation, New Laptop, Car Maintenance) with priority, progress bars, edit/delete.
+  - **Reports & Analytics** – This month / This year summary cards, Spending trends (6/12 months bar chart), Spending by category table with budget vs spent.
+  - **Settings** – Profile (avatar, Add profile photo, Edit profile), Appearance (Dark mode, Language, Quick tour), Category budgets, Backup (Remind monthly, Backup now to folder).
+
+### Changed
+- Replaced previous screenshots with Flutter Windows v5.0.0 UI in `screenshots/` (dashboard, transactions, accounts, income, goals, reports, settings).
+- Screenshots README updated to reflect current set.
+
+---
+
 ## [5.0.0] - 2026-02-03
 
 ### Added
@@ -72,6 +90,7 @@ All notable changes to FamBudget will be documented in this file.
 
 ---
 
+[5.0.1]: https://github.com/lalupj07/FamBudget/releases/tag/v5.0.1
 [5.0.0]: https://github.com/lalupj07/FamBudget/releases/tag/v5.0.0
 [4.0.0]: https://github.com/lalupj07/FamBudget/releases/tag/v4.0.0
 [3.5.1]: https://github.com/lalupj07/FamBudget/releases/tag/v3.5.1

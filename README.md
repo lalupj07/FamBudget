@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![FamBudget Logo](screenshots/logo.jpg)
+![FamBudget](fambudget_flutter/assets/app_icon.png)
 
 ### **Take Control of Your Family's Finances**
 
@@ -41,12 +41,6 @@
 
 ### 💵 **Income & Expense Management**
 
-<div align="center">
-
-![Income Tracker](screenshots/income.png)
-
-</div>
-
 <table>
 <tr>
 <td width="50%">
@@ -79,16 +73,6 @@
 
 ### 📊 **Budgeting & Analytics**
 
-<div align="center">
-
-![Dashboard](screenshots/dashboard.png)
-*Dashboard with key financial metrics and spending breakdown*
-
-![Reports](screenshots/reports.png)
-*Advanced analytics with monthly trends and category breakdown*
-
-</div>
-
 <table>
 <tr>
 <td width="50%">
@@ -120,13 +104,6 @@
 </table>
 
 ### 🎯 **Goal Management**
-
-<div align="center">
-
-![Savings Goals](screenshots/goals.png)
-*Track multiple savings goals with progress bars and priority levels*
-
-</div>
 
 - **Savings Goals** - Set multiple savings targets with target amounts
 - **Progress Tracking** - Visual progress bars showing completion percentage
@@ -233,12 +210,6 @@ flutter build windows --release
 
 ## 🚀 Quick Start Guide
 
-<div align="center">
-
-![Dashboard](screenshots/dashboard.png)
-
-</div>
-
 ### **Step 1: Launch the Application**
 ```
 Open FamBudget from Start Menu or Desktop shortcut
@@ -251,12 +222,6 @@ Open FamBudget from Start Menu or Desktop shortcut
 3. Click "Save"
 ```
 
-<div align="center">
-
-![Transactions](screenshots/transactions.png)
-
-</div>
-
 ### **Step 3: Set Up Accounts**
 ```
 1. Go to "Accounts" section
@@ -264,12 +229,6 @@ Open FamBudget from Start Menu or Desktop shortcut
 3. Add your bank accounts (Checking, Savings, Credit, Investment)
 4. Set initial balances
 ```
-
-<div align="center">
-
-![Accounts](screenshots/accounts.png)
-
-</div>
 
 ### **Step 4: Create Budget Goals**
 ```
@@ -279,12 +238,6 @@ Open FamBudget from Start Menu or Desktop shortcut
 4. Track your progress visually
 ```
 
-<div align="center">
-
-![Goals](screenshots/goals.png)
-
-</div>
-
 ### **Step 5: View Analytics**
 ```
 1. Check "Dashboard" for overview with key metrics
@@ -293,41 +246,39 @@ Open FamBudget from Start Menu or Desktop shortcut
 4. Monitor income vs expenses
 ```
 
-<div align="center">
-
-![Reports](screenshots/reports.png)
-
-</div>
-
 ---
 
-## 📸 Screenshots
+## 📸 Screenshots (FamBudget v5.0.0 – Flutter Windows)
 
 <div align="center">
 
-### 📊 Dashboard View
+### 📊 Dashboard
 ![Dashboard](screenshots/dashboard.png)
-*Comprehensive overview of your financial health with key metrics, spending by category chart, and recent transactions*
+*Summary cards, Income vs Expenses chart, Upcoming recurring, Spending by category, Recent transactions, Quick add*
 
-### 💳 Transaction Management
+### 💳 Transactions
 ![Transactions](screenshots/transactions.png)
-*Easy transaction entry and management with advanced filtering options*
+*Recurring section, filters, search, and transaction list with edit/delete*
 
-### 📈 Analytics & Reports
-![Reports](screenshots/reports.png)
-*Detailed charts and financial insights including monthly trends and category breakdown*
-
-### 🎯 Savings Goals
-![Goals](screenshots/goals.png)
-*Set and achieve your savings goals with progress tracking and priority management*
-
-### 💰 Accounts Overview
+### 💰 Accounts
 ![Accounts](screenshots/accounts.png)
-*Manage multiple accounts including checking, savings, credit cards, and investments*
+*Account cards (Checking, Savings, Cash) with balances and Add Account*
 
-### 💵 Income Tracker
+### 💵 Income
 ![Income](screenshots/income.png)
-*Track multiple income sources with expected vs actual income monitoring*
+*Income sources and entries (recurring and one-time)*
+
+### 🎯 Goals
+![Goals](screenshots/goals.png)
+*Goal calculator and goal cards with priority and progress bars*
+
+### 📈 Reports & Analytics
+![Reports](screenshots/reports.png)
+*Summary cards, Spending trends (6/12 months), Spending by category table*
+
+### ⚙️ Settings
+![Settings](screenshots/settings.png)
+*Profile, Appearance (dark mode, language, quick tour), Category budgets, Backup*
 
 </div>
 

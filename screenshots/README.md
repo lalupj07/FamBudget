@@ -1,19 +1,19 @@
 # Screenshots Directory
 
-This directory contains screenshots of the FamBudget application.
+This directory contains screenshots of the FamBudget application (Flutter Windows v5.0.0 UI).
 
-## Required Screenshots
+## Screenshots (v5.0.1)
 
-Please add the following screenshots to this directory:
-
-1. `logo.png` - FamBudget logo (vibrant blue/green gradient design)
-2. `dashboard.png` - Dashboard view showing financial overview
-3. `transactions.png` - Transactions screen with transaction list
-4. `reports.png` - Reports & Analytics screen with charts
-5. `goals.png` - Savings Goals screen with goal cards
-6. `accounts.png` - Accounts screen with account cards
-7. `income.png` - Income Tracker screen with income sources
+| File | Description |
+|------|-------------|
+| `dashboard.png` | Dashboard: summary cards, Income vs Expenses chart, Upcoming recurring, Spending by category, Recent transactions, Quick add |
+| `transactions.png` | Transactions: Recurring section, filters, transaction list with edit/delete |
+| `accounts.png` | Accounts: account cards (Checking, Savings, Cash) with balances, Add Account |
+| `income.png` | Income: Income sources and Income entries (recurring/one-time) |
+| `goals.png` | Goals: Goal calculator, goal cards with priority and progress bars |
+| `reports.png` | Reports & Analytics: Summary cards, Spending trends (6/12 months), Spending by category table |
+| `settings.png` | Settings: Profile, Appearance (dark mode, language, quick tour), Category budgets, Backup |
 
 ## Usage
 
-These screenshots are referenced in the main README.md file to showcase the application's features and user interface.
+These screenshots are referenced in the main README.md and can be used in GitHub releases and documentation to showcase the application's features and user interface.
